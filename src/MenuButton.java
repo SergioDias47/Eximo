@@ -13,8 +13,6 @@ public class MenuButton extends JButton {
 		    public void mouseEntered(java.awt.event.MouseEvent evt) {
 		        ((JComponent) evt.getSource()).setBackground(new Color(255,255,255));
 		    }
-
-		    
 		});
 		 
 		

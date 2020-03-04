@@ -20,7 +20,7 @@ public class MenuPanel extends JMenuBar {
 
 	    // Drawing the background image
 	    g.drawImage(backgroundImage, 0, 0, this);
-	  }
+	 }
 	
 	public MenuPanel() {
 		super();

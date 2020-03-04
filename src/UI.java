@@ -12,7 +12,7 @@ public class UI extends JFrame {
 		super("gui");
 		
 		setVisible(true);
-		setSize(700,700);
+		setSize(500,700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Eximo");
 		
@@ -32,5 +32,13 @@ public class UI extends JFrame {
 	
 	public void setMenuListener(Controller ctrl) {
 		menuPanel.setButtonListeners(ctrl);
+	}
+	
+	public void displayGamePanel() {
+		layout.next(getContentPane());
+	}
+	
+	public Board getBoard() {
+		return gamePanel.getBoard();
 	}
 }
