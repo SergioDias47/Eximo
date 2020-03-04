@@ -14,6 +14,7 @@ public class UI extends JFrame {
 		setVisible(true);
 		setSize(500,700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		setTitle("Eximo");
 		
 		//Set layout manager

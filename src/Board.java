@@ -44,5 +44,10 @@ public class Board extends JPanel {
 		setIconAt(45, Constants.BLACK_CELL); setIconAt(46,Constants.BLACK_CELL); 
 	}
 	
+	public void setButtonListeners(Controller ctrl) {
+		for(int i = 0; i < buttons.length; i++)
+			buttons[i].addActionListener(ctrl);
+	}
+	
 	
 }
