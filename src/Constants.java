@@ -6,4 +6,5 @@ public class Constants {
 	public final static int PLAYER_1 = 1;
 	public final static int PLAYER_2 = 2;
 	public final static int BOARD_SIZE = 64;
+	public final static int LINE_LENGTH = 8;
 }
