@@ -31,8 +31,7 @@ public class Controller implements ActionListener {
 				gui.getBoard().setIconAt(firstSelection, Constants.EMPTY_CELL);
 				gui.getBoard().setIconAt(buttonID, Constants.WHITE_CELL);
 				firstSelection = -1;
-			}
-				
+			}	
 		}
 	}
 
