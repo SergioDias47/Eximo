@@ -12,4 +12,6 @@ public class Constants {
 	public final static int NORTHEAST = -1;
 	public final static int[] FrontDirections = {NORTH, NORTHWEST, NORTHEAST};
 	public final static int NO_CAPTURE = -1;
+	public final static int WEST = 1;
+	public final static int EAST = -1;
 }

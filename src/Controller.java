@@ -30,13 +30,15 @@ public class Controller implements ActionListener {
 				return;
 			} else {
 				Move attemptedMove = new Move(firstSelection, buttonID);
-				game.executeMove(attemptedMove);
+				if (Eximo.jumpOver)
+					game.sequentialJumpOverMove(attemptedMove);
+				else game.playerMove(attemptedMove);
 				firstSelection = -1;
 			}	
-			List<Move> list = game.findValidMoves();
+			/*List<Move> list = game.findValidMoves();
 			for(Move m: list) {
 				//m.print();
-			}
+			}*/
 		}
 	}
 
