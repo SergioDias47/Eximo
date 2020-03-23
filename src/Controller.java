@@ -1,6 +1,7 @@
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class Controller implements ActionListener {
 
@@ -17,7 +18,7 @@ public class Controller implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(((Component) e.getSource()).getName().equals("PP")) {
-			game = new Eximo();
+			game = new Eximo(gui);
 			gui.displayGamePanel();
 			gui.getBoard().setButtonListeners(this);
 		}
@@ -28,10 +29,14 @@ public class Controller implements ActionListener {
 				firstSelection = buttonID;
 				return;
 			} else {
-				gui.getBoard().setIconAt(firstSelection, Constants.EMPTY_CELL);
-				gui.getBoard().setIconAt(buttonID, Constants.WHITE_CELL);
+				Move attemptedMove = new Move(firstSelection, buttonID);
+				game.executeMove(attemptedMove);
 				firstSelection = -1;
 			}	
+			List<Move> list = game.findValidMoves();
+			for(Move m: list) {
+				//m.print();
+			}
 		}
 	}
 
