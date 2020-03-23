@@ -18,25 +18,35 @@ public class UI extends JFrame {
 		setResizable(false);
 		setTitle("Eximo");
 		
-		//Set layout manager
+		// Set layout manager
 		layout = new CardLayout();
 		setLayout(layout);
 		
 		gamePanel = new GamePanel();
 		menuPanel = new MenuPanel();
 		
-		//Add Swing components to content pane
+		// Add Swing components to content pane
 		Container c = getContentPane();
 		c.add(menuPanel);
 		c.add(gamePanel);
-		
 	}
 	
 	public void setMenuListener(Controller ctrl) {
 		menuPanel.setButtonListeners(ctrl);
 	}
 	
-	public void displayGamePanel() {
+	public void setGamePanelListener(Controller ctrl) {
+		gamePanel.setButtonListeners(ctrl);
+	}
+	
+	public void switchPanel(int panel) {
+		if(panel == Constants.GAME_PANEL) {
+			if(gamePanel != null)
+				getContentPane().remove(gamePanel);
+			gamePanel = new GamePanel();
+			getContentPane().add(gamePanel);
+		}
+			
 		layout.next(getContentPane());
 	}
 	

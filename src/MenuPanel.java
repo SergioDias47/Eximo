@@ -36,19 +36,18 @@ public class MenuPanel extends JMenuBar {
 		try {
 			backgroundImage = ImageIO.read(new File("Pictures\\background.jpg"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		// Swing components
 		startPPGameButton = new MenuButton();
-		startPPGameButton.setText("Start player vs player game");
+		startPPGameButton.setText("Player vs Player");
 		startPPGameButton.setName("PP");
 		
 		startPBGameButton = new MenuButton();
-		startPBGameButton.setText("Start player vs bot game");
-		
+		startPBGameButton.setText("Players vs Bot");
 		startPBGameButton.setName("PB");
+		
 		startPPGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		startPBGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 	

@@ -14,4 +14,8 @@ public class Constants {
 	public final static int NO_CAPTURE = -1;
 	public final static int WEST = 1;
 	public final static int EAST = -1;
+	public final static int MENU_PANEL = 0;
+	public final static int GAME_PANEL = 1;
+	public final static int PLAYER_VS_PLAYER = 0;
+	public final static int PLAYER_VS_BOT = 1;
 }

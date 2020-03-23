@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 public class Eximo {
+	private int gamemode;
 	private int cells[];
 	private int currentPlayer;
 	private UI gui;
 	public static boolean jumpOver = false;
 	
-	public Eximo(UI gui) {
+	public Eximo(int gamemode, UI gui) {
+		this.gamemode = gamemode;
 		initializeBoard();
 		currentPlayer = Constants.PLAYER_1;
 		this.gui = gui;
@@ -158,7 +161,10 @@ public class Eximo {
 		}
 		nextPlayer();
 		System.out.println("Player turn: " + currentPlayer);
-		return;
+		
+		if(gamemode == Constants.PLAYER_VS_BOT) {
+			botMove();
+		}
 	}
 	
 	public void sequentialJumpOverMove(Move move) {
@@ -173,6 +179,33 @@ public class Eximo {
 			jumpOver = false;
 			nextPlayer();
 		}
+	}
+	
+	public void botMove() {
+		List<Move> possibleMoves = findValidMoves();
+		Random ran = new Random();
+		int x = ran.nextInt(possibleMoves.size());
+		Move randomMove = possibleMoves.get(x);
+		
+		int startP = randomMove.startPos.toBoardPos();
+		int endP = randomMove.endPos.toBoardPos();
+		
+		//if (cells[(endP+startP)/2] == Utils.otherPlayer(currentPlayer))
+			//move.checkCapture();
+		
+		emptyCell(startP);
+		fillCell(endP);
+		if(randomMove.isCapture()) { // we're handling a capture move
+			emptyCell(randomMove.captured);
+		}
+		else if (randomMove.isJumpOver()) {
+			if (generateJumpOverMoves(endP).size() != 0) {
+				jumpOver = true;
+				return;
+			}
+		}
+		nextPlayer();
+		System.out.println("Player turn: " + currentPlayer);
 	}
 	
 	
