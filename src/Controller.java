@@ -17,10 +17,18 @@ public class Controller implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(((Component) e.getSource()).getName().equals("PP")) {
-			game = new Eximo(gui);
-			gui.displayGamePanel();
-			gui.getBoard().setButtonListeners(this);
+		if(((Component) e.getSource()).getClass().equals(MenuButton.class)) {
+			String buttonName = ((Component) e.getSource()).getName();
+			switch(buttonName) {
+				case "PP":
+					game = new Eximo(gui);
+					gui.displayGamePanel();
+					gui.getBoard().setButtonListeners(this);
+					break;
+				case "exit":
+					gui.exit();
+					break;
+			}
 		}
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			int buttonID = Integer.parseInt(((Component) e.getSource()).getName());
@@ -35,10 +43,6 @@ public class Controller implements ActionListener {
 				else game.playerMove(attemptedMove);
 				firstSelection = -1;
 			}	
-			/*List<Move> list = game.findValidMoves();
-			for(Move m: list) {
-				//m.print();
-			}*/
 		}
 	}
 

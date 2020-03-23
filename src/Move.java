@@ -31,7 +31,7 @@ public class Move {
 		return this.captured != Constants.NO_CAPTURE;
 	}
 	
-	/* Only used after checking if it is a capture, thus not having a complete check*/
+	/* Only used after checking if it is a capture, thus not having a complete check */
 	public boolean isJumpOver() {
 		return Math.abs(startPos.x - endPos.x) == 2 || Math.abs(startPos.y - endPos.y) == 2;
 	}

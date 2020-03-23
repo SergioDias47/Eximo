@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -7,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 
 public class MenuPanel extends JMenuBar {
@@ -44,6 +47,7 @@ public class MenuPanel extends JMenuBar {
 		
 		startPBGameButton = new MenuButton();
 		startPBGameButton.setText("Start player vs bot game");
+		
 		startPBGameButton.setName("PB");
 		startPPGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		startPBGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
@@ -52,11 +56,35 @@ public class MenuPanel extends JMenuBar {
 		exitButton.setText("Exit game");
 		exitButton.setName("exit");
 		
-		// Adding components to content pane
+		// Add components to content pane
 	
-		add(startPPGameButton);
-		add(startPBGameButton);
-		add(exitButton);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(startPPGameButton, BorderLayout.NORTH);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(startPBGameButton, BorderLayout.SOUTH);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(exitButton, BorderLayout.SOUTH);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
 	}
 	
 	public void setButtonListeners(Controller ctrl) {

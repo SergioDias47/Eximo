@@ -3,21 +3,23 @@ import java.awt.Graphics;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.border.Border;
 
 public class MenuButton extends JButton {
 	public MenuButton() {
 		super();
-		this.setOpaque(false);
-		this.setBackground(new Color(255,255,255));
+		this.setOpaque(true);
+		this.setBackground(new Color(255, 255, 227));
+		this.setForeground(new Color(156, 90, 3));
 		this.addMouseListener(new java.awt.event.MouseAdapter() {
 		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-		        ((JComponent) evt.getSource()).setBackground(new Color(255,255,255));
+		        ((JComponent) evt.getSource()).setBackground(new Color(156, 90, 3));
+		        ((JComponent) evt.getSource()).setForeground(new Color(255, 255, 227));
+		    }
+		    public void mouseExited(java.awt.event.MouseEvent evt) {
+		        ((JComponent) evt.getSource()).setBackground(new Color(255, 255, 227));
+		        ((JComponent) evt.getSource()).setForeground(new Color(156, 90, 3));
 		    }
 		});
-		 
-		
-		
 	}
-	
-	
 }

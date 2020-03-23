@@ -1,5 +1,6 @@
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -41,5 +42,9 @@ public class UI extends JFrame {
 	
 	public Board getBoard() {
 		return gamePanel.getBoard();
+	}
+	
+	public void exit() {
+		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 }
