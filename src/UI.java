@@ -37,8 +37,6 @@ public class UI extends JFrame {
 	
 	public void setGamePanelListener(Controller ctrl) {
 		gamePanel.setButtonListeners(ctrl);
-		addKeyListener(ctrl);
-		this.setFocusable(true);
 	}
 	
 	public void switchPanel(int panel) {

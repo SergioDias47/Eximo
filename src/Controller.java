@@ -17,6 +17,7 @@ public class Controller implements ActionListener, KeyListener {
 		//UI
 		gui = new UI();
 		gui.setMenuListener(this);
+		gui.setKeyListener(this);
 		possibleMoves = new ArrayList<Move>();
 	}
 	
@@ -31,8 +32,6 @@ public class Controller implements ActionListener, KeyListener {
 			if(firstSelection == -1) {
 				firstSelection = buttonID;
 				highlightMoves();
-				gui.requestFocusInWindow();
-				return;
 			} else {
 				Move attemptedMove = new Move(firstSelection, buttonID);
 				removeHighlights();
@@ -69,6 +68,7 @@ public class Controller implements ActionListener, KeyListener {
 					break;
 			}
 		} 
+		gui.requestFocusInWindow();
 	}
 
 	@Override
@@ -80,7 +80,8 @@ public class Controller implements ActionListener, KeyListener {
 			firstSelection = -1;
 		}
 		if(key == KeyEvent.VK_ESCAPE) {
-			goBackToMenu();
+			if(game != null)
+				goBackToMenu();
 		}
 	}
 
@@ -106,6 +107,7 @@ public class Controller implements ActionListener, KeyListener {
 	}
 	
 	public void goBackToMenu() {
+		game = null;
 		gui.switchPanel(Constants.MENU_PANEL);
 		firstSelection = -1;
 		possibleMoves.clear();
