@@ -18,4 +18,7 @@ public class Constants {
 	public final static int GAME_PANEL = 1;
 	public final static int PLAYER_VS_PLAYER = 0;
 	public final static int PLAYER_VS_BOT = 1;
+	public final static int NORMAL = 0;
+	public final static int CAPTURE = 1;
+	public final static int JUMP_OVER = 2;
 }

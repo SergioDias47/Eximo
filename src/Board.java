@@ -3,7 +3,7 @@ public class Board {
 	private int cells[];
 	
 	public Board() {
-		initialize();
+		initializeDebugBoard();
 	}
 	
 	/* Initializes the board as it should be in the beginning of a match */
@@ -21,6 +21,12 @@ public class Board {
 		cells[45] = Constants.BLACK_CELL; cells[46] = Constants.BLACK_CELL; 
 	}
 	
+	public void initializeDebugBoard() {
+		cells = new int[Constants.BOARD_SIZE];
+		cells[33] = Constants.WHITE_CELL;
+		cells[40] = Constants.BLACK_CELL;
+	}
+	
 	public int getCell(int id) {
 		return cells[id];
 	}
@@ -28,7 +34,7 @@ public class Board {
 	public void setCell(int id, int value) {
 		cells[id] = value;
 	}
-	
+	 
 	public int length() {
 		return cells.length;
 	}
@@ -37,6 +43,15 @@ public class Board {
 		int count = 0;
 		for(int cell : cells) {
 			if(cell == player)
+				count++;
+		}
+		return count;
+	}
+	
+	public int countSafeZoneFreeCells(int player) {
+		int count = 0;
+		for(int position = 0; position < cells.length; position++) {
+			if(Utils.isWithinSafeZone(player, position) && cells[position] == Constants.EMPTY_CELL)
 				count++;
 		}
 		return count;
@@ -51,7 +66,7 @@ public class Board {
 			if(cell == player) {
 				Position pos = new Position(cell);
 				evaluation += (player == 1)? pos.y : 7 - pos.y;
-			} else {
+			} else if(cell == Utils.otherPlayer(player)){
 				Position pos = new Position(cell);
 				evaluation -= (player == 1)? 7 - pos.y : pos.y;
 			}

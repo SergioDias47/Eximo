@@ -7,7 +7,7 @@ public class Position {
 		this.x = position % Constants.LINE_LENGTH;
 		this.y = position / Constants.LINE_LENGTH;
 	}
-
+ 
 	@Override
 	public String toString() {
 		return "(" + x + ", " + y + ")";

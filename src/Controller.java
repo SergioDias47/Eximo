@@ -19,17 +19,26 @@ public class Controller implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			int buttonID = Integer.parseInt(((Component) e.getSource()).getName());
-			System.out.println(buttonID);
+			if(game.getPiecesToPlace() > 0) {
+				game.addPieceAt(buttonID);
+			}
 			if(firstSelection == -1) {
 				firstSelection = buttonID;
 				return;
 			} else {
 				Move attemptedMove = new Move(firstSelection, buttonID);
-				if (game.jumpOver)
-					game.sequentialJumpOverMove(attemptedMove);
-				else game.playerMove(attemptedMove);
+				switch (game.getMoveState()) {
+					case Constants.NORMAL: 
+						game.playerMove(attemptedMove);
+						break;
+					case Constants.JUMP_OVER:
+						game.sequentialJumpOver(attemptedMove);
+						break;
+					case Constants.CAPTURE:
+						game.sequentialCapture(attemptedMove);
+				}
 				firstSelection = -1;
-			}	
+			}
 		} else {
 			String buttonName = ((Component) e.getSource()).getName();
 			switch(buttonName) {

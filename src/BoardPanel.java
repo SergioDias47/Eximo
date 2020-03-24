@@ -18,7 +18,8 @@ public class BoardPanel extends JPanel {
 			buttons[i].setName(i+"");
 			add(buttons[i]);
 		}
-		initialize();
+		//initialize();
+		initializeDebugBoard();
 	}
 	
 	/*
@@ -42,6 +43,11 @@ public class BoardPanel extends JPanel {
 		setIconAt(21, Constants.WHITE_CELL); setIconAt(22, Constants.WHITE_CELL); 
 		setIconAt(41, Constants.BLACK_CELL); setIconAt(42, Constants.BLACK_CELL);
 		setIconAt(45, Constants.BLACK_CELL); setIconAt(46,Constants.BLACK_CELL); 
+	}
+	
+	public void initializeDebugBoard() {
+		setIconAt(33,Constants.WHITE_CELL);
+		setIconAt(40,Constants.BLACK_CELL);
 	}
 	
 	public void setButtonListeners(Controller ctrl) {

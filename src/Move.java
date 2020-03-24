@@ -4,12 +4,16 @@ import java.util.List;
 public class Move {
 	public final Position startPos;
 	public final Position endPos;
+	public boolean simple;
 	public int captured;
 	public List<Move> nextMoves;
 	
 	public Move(int startPos, int endPos) {
 		this.startPos = new Position(startPos);
 		this.endPos = new Position(endPos);
+		if(Math.abs(this.startPos.x - this.endPos.x) == 2 || Math.abs(this.startPos.y - this.endPos.y) == 2)
+			this.simple = false;
+		else this.simple = true;
 		this.captured = Constants.NO_CAPTURE;
 		nextMoves = new ArrayList<Move>();
 	}
@@ -21,14 +25,11 @@ public class Move {
 				  endPos.y < Constants.LINE_LENGTH;
 	}
 	
-	public void setCaptured(int captured) {
-		this.captured = captured;
-	}
-	
-	public void checkCapture() {
-		if (Math.abs(startPos.x - endPos.x) == 2 || Math.abs(startPos.y - endPos.y) == 2) {
+	public boolean setCaptured() {
+		if (!simple) {
 			this.captured = (startPos.toBoardPos() + endPos.toBoardPos()) / 2;
 		}
+		return !simple;
 	}
 	
 	public boolean isCapture() {
@@ -37,7 +38,7 @@ public class Move {
 	
 	/* Only used after checking if it is a capture, thus not having a complete check */
 	public boolean isJumpOver() {
-		return Math.abs(startPos.x - endPos.x) == 2 || Math.abs(startPos.y - endPos.y) == 2;
+		return !simple;
 	}
 	
     @Override
