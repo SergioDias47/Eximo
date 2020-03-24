@@ -6,14 +6,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
-	private Board board;
+	private BoardPanel board;
 	private MenuButton exitButton;
 	
 	public GamePanel() {
 		super();
 		setLayout(new BorderLayout());
 		
-		board = new Board();
+		board = new BoardPanel();
 		exitButton = new MenuButton();
 		exitButton.setText("Go back to menu");
 		exitButton.setName("goBackMenu");
@@ -22,7 +22,7 @@ public class GamePanel extends JPanel {
 		add(exitButton, BorderLayout.SOUTH);
 	}	
 	
-	public Board getBoard() {
+	public BoardPanel getBoard() {
 		return board;
 	}
 
