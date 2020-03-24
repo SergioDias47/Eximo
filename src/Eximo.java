@@ -2,13 +2,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Eximo {
 	private int gamemode;
 	private int cells[];
 	private int currentPlayer;
 	private UI gui;
-	public static boolean jumpOver = false;
+	public boolean jumpOver = false;
 	
 	public Eximo(int gamemode, UI gui) {
 		this.gamemode = gamemode;
@@ -185,14 +186,14 @@ public class Eximo {
 		List<Move> possibleMoves = findValidMoves();
 		Random ran = new Random();
 		int x = ran.nextInt(possibleMoves.size());
-		Move randomMove = possibleMoves.get(x);
+		
+		Move randomMove = possibleMoves.get(x); // chooses move
 		
 		int startP = randomMove.startPos.toBoardPos();
 		int endP = randomMove.endPos.toBoardPos();
 		
 		//if (cells[(endP+startP)/2] == Utils.otherPlayer(currentPlayer))
 			//move.checkCapture();
-		
 		emptyCell(startP);
 		fillCell(endP);
 		if(randomMove.isCapture()) { // we're handling a capture move

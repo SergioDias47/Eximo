@@ -1,13 +1,17 @@
+import java.util.ArrayList;
+import java.util.List;
 
 public class Move {
 	public final Position startPos;
 	public final Position endPos;
 	public int captured;
+	public List<Move> nextMoves;
 	
 	public Move(int startPos, int endPos) {
 		this.startPos = new Position(startPos);
 		this.endPos = new Position(endPos);
 		this.captured = Constants.NO_CAPTURE;
+		nextMoves = new ArrayList<Move>();
 	}
 	
 	public boolean checkBoundaries() {
