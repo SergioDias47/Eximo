@@ -1,11 +1,16 @@
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.border.Border;
 
 public class BoardButton extends JButton{
-	ImageIcon white, black, empty; 
-	final String whiteImgPath = "Pictures\\whitePiece2.jpg";
-	final String blackImgPath = "Pictures\\blackPiece2.jpg";
-	final String emptyImgPath = "Pictures\\emptyPiece.jpg";
+	private ImageIcon white, black, empty; 
+	private final Border highlighted = BorderFactory.createLineBorder(Color.yellow, 2);
+	private final String whiteImgPath = "Pictures\\whitePiece2.jpg";
+	private final String blackImgPath = "Pictures\\blackPiece2.jpg";
+	private final String emptyImgPath = "Pictures\\emptyPiece.jpg";
 	
 	public BoardButton() {
 		super();
@@ -13,6 +18,7 @@ public class BoardButton extends JButton{
 		black = new ImageIcon(blackImgPath);
 		empty = new ImageIcon(emptyImgPath);
 		setIcon(Constants.EMPTY_CELL);
+		
 	}
 	
 	public BoardButton(int type) {
@@ -28,6 +34,14 @@ public class BoardButton extends JButton{
 		else if (type == Constants.BLACK_CELL)
 			setIcon(black);
 		else setIcon(empty);
+	}
+	
+	public void highlight() {
+		if(highlighted != getBorder()) {
+			setBorder(highlighted);
+		} else {
+			setBorder(new JButton().getBorder()); // sets the border to default
+		}
 	}
 
 }

@@ -1,18 +1,23 @@
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Controller implements ActionListener {
+public class Controller implements ActionListener, KeyListener {
 
 	private UI gui;
 	private Eximo game;
 	private int firstSelection = -1;
+	private List<Move> possibleMoves;
 	
 	public Controller() {
 		//UI
 		gui = new UI();
 		gui.setMenuListener(this);
+		possibleMoves = new ArrayList<Move>();
 	}
 	
 	@Override
@@ -21,12 +26,16 @@ public class Controller implements ActionListener {
 			int buttonID = Integer.parseInt(((Component) e.getSource()).getName());
 			if(game.getPiecesToPlace() > 0) {
 				game.addPieceAt(buttonID);
+				return;
 			}
 			if(firstSelection == -1) {
 				firstSelection = buttonID;
+				highlightMoves();
+				gui.requestFocusInWindow();
 				return;
 			} else {
 				Move attemptedMove = new Move(firstSelection, buttonID);
+				removeHighlights();
 				switch (game.getMoveState()) {
 					case Constants.NORMAL: 
 						game.playerMove(attemptedMove);
@@ -56,10 +65,52 @@ public class Controller implements ActionListener {
 					gui.exit();
 					break;
 				case "goBackMenu":
-					gui.switchPanel(Constants.MENU_PANEL);
+					goBackToMenu();
 					break;
 			}
+		} 
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int key = e.getKeyCode();
+		if(key == KeyEvent.VK_R) {
+			if(firstSelection != -1)
+				removeHighlights();
+			firstSelection = -1;
+		}
+		if(key == KeyEvent.VK_ESCAPE) {
+			goBackToMenu();
 		}
 	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+	
+	public void highlightMoves() {
+		gui.getBoard().highlightAt(firstSelection);
+		possibleMoves = game.generateCaptureMoves(firstSelection);
+		if(possibleMoves.isEmpty() && game.generateAllCaptureMoves().isEmpty())
+			possibleMoves = game.generateMoves(firstSelection); 
+		for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos());
+	}
+	
+	public void removeHighlights() {
+		gui.getBoard().highlightAt(firstSelection);
+		for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos()); 
+	}
+	
+	public void goBackToMenu() {
+		gui.switchPanel(Constants.MENU_PANEL);
+		firstSelection = -1;
+		possibleMoves.clear();
+	}
+	
+	
 
 }

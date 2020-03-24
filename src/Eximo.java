@@ -137,6 +137,7 @@ public class Eximo {
 	
 	public void nextPlayer() {
 		currentPlayer = Utils.otherPlayer(currentPlayer);
+		gui.updatePlayerTurn();
 	}
 	
 	public void emptyCell(int position) {

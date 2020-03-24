@@ -37,6 +37,8 @@ public class UI extends JFrame {
 	
 	public void setGamePanelListener(Controller ctrl) {
 		gamePanel.setButtonListeners(ctrl);
+		addKeyListener(ctrl);
+		this.setFocusable(true);
 	}
 	
 	public void switchPanel(int panel) {
@@ -54,7 +56,15 @@ public class UI extends JFrame {
 		return gamePanel.getBoard();
 	}
 	
+	public void updatePlayerTurn() {
+		gamePanel.updatePlayerTurn();
+	}
+	
 	public void exit() {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	}
+
+	public void setKeyListener(Controller ctrl) {
+		addKeyListener(ctrl);
 	}
 }

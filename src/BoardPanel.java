@@ -55,5 +55,9 @@ public class BoardPanel extends JPanel {
 			buttons[i].addActionListener(ctrl);
 	}
 	
+	public void highlightAt(int id) {
+		buttons[id].highlight();
+	}
+	
 	
 }
