@@ -18,8 +18,8 @@ public class BoardPanel extends JPanel {
 			buttons[i].setName(i+"");
 			add(buttons[i]);
 		}
-		//initialize();
-		initializeDebugBoard();
+		initialize();
+		//initializeDebugBoard();
 	}
 	
 	/*

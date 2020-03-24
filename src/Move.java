@@ -54,6 +54,11 @@ public class Move {
     }  
 
 	public void print() {
+		System.out.println("-----------------------");
 		System.out.println("startPos: " + startPos + "    endPos: " + endPos + "  Captured: " + captured);
+		System.out.println("next moves: " + nextMoves.size());
+		for(Move m : nextMoves) {
+			m.print();
+		}
 	}
 }

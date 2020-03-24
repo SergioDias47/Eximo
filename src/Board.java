@@ -3,7 +3,7 @@ public class Board {
 	private int cells[];
 	
 	public Board() {
-		initializeDebugBoard();
+		initialize();
 	}
 	
 	/* Initializes the board as it should be in the beginning of a match */

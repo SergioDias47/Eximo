@@ -63,6 +63,13 @@ public class Eximo {
 		Move captureEast = checkCaptureSide(startPos, Constants.EAST);
 		if(captureEast != null) captureMoves.add(captureEast);
 		
+		for (Move capture : captureMoves) {
+			int endPos = capture.endPos.toBoardPos();
+			board.setCell(endPos, currentPlayer);
+			capture.nextMoves.addAll(generateCaptureMoves(endPos));
+			board.setCell(endPos, Constants.EMPTY_CELL);
+			capture.print();
+		}
 		return captureMoves;
 	}
 	
@@ -98,6 +105,9 @@ public class Eximo {
 		int midPos = (startPos + endPos) / 2;
 		Move move = new Move(startPos, endPos);
 		if(move.checkBoundaries() && board.getCell(endPos) == Constants.EMPTY_CELL && board.getCell(midPos) == currentPlayer) {
+			board.setCell(endPos, currentPlayer);
+			move.nextMoves.addAll(generateJumpOverMoves(endPos));
+			board.setCell(endPos, Constants.EMPTY_CELL);
 			return move;
 		}
 		return null;
@@ -156,6 +166,7 @@ public class Eximo {
 		} else if (!generateMoves(startP).contains(move)) {
 			return;
 		}
+		System.out.println("Player turn: " + currentPlayer);
 		emptyCell(startP);
 		fillCell(endP);
 		if(move.isCapture()) { // we're handling a capture move
@@ -166,14 +177,15 @@ public class Eximo {
 			}
 		}
 		else if (move.isJumpOver()) {
+			System.out.println("End P: " + endP);
 			if (generateJumpOverMoves(endP).size() != 0) {
 				moveState = Constants.JUMP_OVER;
 				return;
 			}
 		}
 		reachedEndOfBoard(endP);
-		if(gameOver()) return;
-		System.out.println("Player turn: " + currentPlayer);
+		//if(gameOver()) return;
+		
 		if(gamemode == Constants.PLAYER_VS_BOT) {
 			botMove();
 		}
@@ -184,9 +196,11 @@ public class Eximo {
 				|| (currentPlayer == Constants.PLAYER_2 && endPos/Constants.LINE_LENGTH == 0)) {
 			switch(board.countSafeZoneFreeCells(currentPlayer)) {
 				case 0:
+					System.out.println("Your piece is gone and no extra pieces will be given!");
 					nextPlayer();
 					break;
 				case 1:
+					System.out.println("You earned yourself 1 new piece!");
 					piecesToPlace = 1;
 					break;
 				default:
@@ -197,7 +211,6 @@ public class Eximo {
 			emptyCell(endPos);
 		}
 		else nextPlayer();
-			
 	}
 	
 	public void sequentialJumpOver(Move move) {
@@ -210,7 +223,7 @@ public class Eximo {
 		fillCell(endP);
 		if (generateJumpOverMoves(endP).size() == 0) {
 			moveState = Constants.NORMAL;
-			nextPlayer();
+			reachedEndOfBoard(endP);
 		}
 	}
 	
@@ -226,7 +239,7 @@ public class Eximo {
 		emptyCell(move.captured);
 		if (generateCaptureMoves(endP).size() == 0) {
 			moveState = Constants.NORMAL;
-			nextPlayer();
+			reachedEndOfBoard(endP); // REVER MUITO BEM ISTO
 		}
 	}
 	
