@@ -50,7 +50,7 @@ public class UI extends JFrame {
 		layout.next(getContentPane());
 	}
 	
-	public Board getBoard() {
+	public BoardPanel getBoard() {
 		return gamePanel.getBoard();
 	}
 	
