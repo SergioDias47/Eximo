@@ -6,6 +6,11 @@ public class Board {
 		initialize();
 	}
 	
+	public Board(Board board) {
+		cells = new int[Constants.BOARD_SIZE];
+		System.arraycopy(board.cells, 0, cells, 0, board.length());
+	}
+	
 	/* Initializes the board as it should be in the beginning of a match */
 	public void initialize() {
 		cells = new int[Constants.BOARD_SIZE];

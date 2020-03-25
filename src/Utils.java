@@ -13,7 +13,6 @@ public class Utils {
 	}
 	
 	public static boolean isWithinSafeZone(int player, int position) {
-		System.out.println("Position: " + position);
         if(player == 1)
             for(int i = 1; i <= 6; i++) {
                 if(position == i || position == i+8)

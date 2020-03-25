@@ -68,7 +68,6 @@ public class Eximo {
 			board.setCell(endPos, currentPlayer);
 			capture.nextMoves.addAll(generateCaptureMoves(endPos));
 			board.setCell(endPos, Constants.EMPTY_CELL);
-			capture.print();
 		}
 		return captureMoves;
 	}
@@ -167,24 +166,28 @@ public class Eximo {
 		} else if (!generateMoves(startP).contains(move)) {
 			return;
 		}
+		for (Move m : generateMoves(startP)) {
+			emulateMove(this.board, m, currentPlayer);
+		}
 		System.out.println("Player turn: " + currentPlayer);
 		emptyCell(startP);
 		fillCell(endP);
 		if(move.isCapture()) { // we're handling a capture move
 			emptyCell(move.captured);
-			if (generateCaptureMoves(endP).size() != 0) {
-				moveState = Constants.CAPTURE;
-				return;
-			}
+			if (!reachedEndOfBoard(endP))
+				if (generateCaptureMoves(endP).size() != 0) {
+					moveState = Constants.CAPTURE;
+					return;
+				}
 		}
 		else if (move.isJumpOver()) {
-			System.out.println("End P: " + endP);
 			if (generateJumpOverMoves(endP).size() != 0) {
 				moveState = Constants.JUMP_OVER;
 				return;
 			}
 		}
-		reachedEndOfBoard(endP);
+		if (!reachedEndOfBoard(endP)) 
+			nextPlayer();
 		//if(gameOver()) return;
 		
 		if(gamemode == Constants.PLAYER_VS_BOT) {
@@ -192,9 +195,10 @@ public class Eximo {
 		}
 	}
 	
-	public void reachedEndOfBoard(int endPos) {
+	public boolean reachedEndOfBoard(int endPos) {
 		if ((currentPlayer == Constants.PLAYER_1 && endPos/Constants.LINE_LENGTH == 7) 
 				|| (currentPlayer == Constants.PLAYER_2 && endPos/Constants.LINE_LENGTH == 0)) {
+			moveState = Constants.NORMAL;
 			switch(board.countSafeZoneFreeCells(currentPlayer)) {
 				case 0:
 					System.out.println("Your piece is gone and no extra pieces will be given!");
@@ -210,8 +214,8 @@ public class Eximo {
 					break;
 			}
 			emptyCell(endPos);
-		}
-		else nextPlayer();
+		} else return false;
+		return true;
 	}
 	
 	public void sequentialJumpOver(Move move) {
@@ -222,10 +226,11 @@ public class Eximo {
 		}
 		emptyCell(startP);
 		fillCell(endP);
-		if (generateJumpOverMoves(endP).size() == 0) {
-			moveState = Constants.NORMAL;
-			reachedEndOfBoard(endP);
-		}
+		if (!reachedEndOfBoard(endP))
+			if (generateJumpOverMoves(endP).size() == 0) {
+				moveState = Constants.NORMAL;
+				nextPlayer();
+			}
 	}
 	
 	public void sequentialCapture(Move move) {
@@ -238,10 +243,11 @@ public class Eximo {
 		emptyCell(startP);
 		fillCell(endP);
 		emptyCell(move.captured);
-		if (generateCaptureMoves(endP).size() == 0) {
-			moveState = Constants.NORMAL;
-			reachedEndOfBoard(endP); // REVER MUITO BEM ISTO
-		}
+		if (!reachedEndOfBoard(endP))
+			if (generateCaptureMoves(endP).size() == 0) {
+				moveState = Constants.NORMAL;
+				nextPlayer();
+			}
 	}
 	
 	public void botMove() {
@@ -289,11 +295,25 @@ public class Eximo {
 	}
 
 	public void addPieceAt(int position) {
+		System.out.println("Pieces: "+ piecesToPlace);
 		if(Utils.isWithinSafeZone(currentPlayer, position) && board.getCell(position) == Constants.EMPTY_CELL) {
 			fillCell(position);
 			piecesToPlace--;
 		}
 		if (piecesToPlace == 0) nextPlayer();
+	}
+	
+	Board emulateMove(Board currentBoard, Move move, int player) {
+		Board boardRes = new Board(currentBoard);
+		int startPos = move.startPos.toBoardPos();
+		int endPos = move.endPos.toBoardPos();
+		boardRes.setCell(startPos, Constants.EMPTY_CELL);
+		boardRes.setCell(endPos, player);
+		if (move.isCapture()) {
+			int midPos = (startPos + endPos) / 2;
+			boardRes.setCell(midPos, Constants.EMPTY_CELL);
+		}
+		return boardRes;
 	}
 	
 	
