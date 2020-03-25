@@ -54,8 +54,8 @@ public class UI extends JFrame {
 		return gamePanel.getBoard();
 	}
 	
-	public void updatePlayerTurn() {
-		gamePanel.updatePlayerTurn();
+	public void updateMatchInfo(int numPieces1, int numPieces2) {
+		gamePanel.updateMatchInfo(numPieces1, numPieces2);
 	}
 	
 	public void exit() {

@@ -137,7 +137,7 @@ public class Eximo {
 	
 	public void nextPlayer() {
 		currentPlayer = Utils.otherPlayer(currentPlayer);
-		gui.updatePlayerTurn();
+		gui.updateMatchInfo(board.countPieces(Constants.PLAYER_1), board.countPieces(Constants.PLAYER_2));
 	}
 	
 	public void emptyCell(int position) {

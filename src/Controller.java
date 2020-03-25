@@ -60,6 +60,11 @@ public class Controller implements ActionListener, KeyListener {
 					gui.switchPanel(Constants.GAME_PANEL);
 					gui.setGamePanelListener(this);
 					break;
+				case "BB":
+					game = new Eximo(Constants.BOT_VS_BOT, gui);
+					gui.switchPanel(Constants.GAME_PANEL);
+					gui.setGamePanelListener(this);
+					break;
 				case "exit":
 					gui.exit();
 					break;

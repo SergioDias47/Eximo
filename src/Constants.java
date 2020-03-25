@@ -18,9 +18,12 @@ public class Constants {
 	public final static int GAME_PANEL = 1;
 	public final static int PLAYER_VS_PLAYER = 0;
 	public final static int PLAYER_VS_BOT = 1;
+	public final static int BOT_VS_BOT = 2;
 	public final static int NORMAL = 0;
 	public final static int CAPTURE = 1;
 	public final static int JUMP_OVER = 2;
-	public final static String PLAYER_1_TURN = "Player 1's Turn";
-	public final static String PLAYER_2_TURN = "Player 2's Turn";
+	public final static String PLAYER_1_TURN = "   Player 1's Turn";
+	public final static String PLAYER_2_TURN = "   Player 2's Turn";
+	public final static String REMAINING_PIECES_MSG_1 = "      Player 1 \t\t Remaining pieces: ";
+	public final static String REMAINING_PIECES_MSG_2 = "      Player 2 \t\t Remaining pieces: ";
 }

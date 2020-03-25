@@ -15,6 +15,7 @@ import javax.swing.JMenuBar;
 public class MenuPanel extends JMenuBar {
 	private MenuButton startPPGameButton; // start a player vs player match
 	private MenuButton startPBGameButton; // start a player vs bot match
+	private MenuButton startBBGameButton; // start a bot vs bot match
 	private MenuButton exitButton; 
 	private Image backgroundImage;
 	
@@ -30,7 +31,7 @@ public class MenuPanel extends JMenuBar {
 		
 		// Setting layout manager
 		
-		GridLayout layout = new GridLayout(7,3);
+		GridLayout layout = new GridLayout(9,3);
 		setLayout(layout);
 		this.setBackground(new Color(0,0,0));
 		try {
@@ -41,18 +42,22 @@ public class MenuPanel extends JMenuBar {
 		
 		// Swing components
 		startPPGameButton = new MenuButton();
-		startPPGameButton.setText("Player vs Player");
+		startPPGameButton.setText("PLAYER vs PLAYER");
 		startPPGameButton.setName("PP");
 		
 		startPBGameButton = new MenuButton();
-		startPBGameButton.setText("Players vs Bot");
+		startPBGameButton.setText("PLAYER vs BOT");
 		startPBGameButton.setName("PB");
+		
+		startBBGameButton = new MenuButton();
+		startBBGameButton.setText("BOT vs BOT");
+		startBBGameButton.setName("BB");
 		
 		startPPGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 		startPBGameButton.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 	
 		exitButton = new MenuButton();
-		exitButton.setText("Exit game");
+		exitButton.setText("EXIT GAME");
 		exitButton.setName("exit");
 		
 		// Add components to content pane
@@ -71,6 +76,14 @@ public class MenuPanel extends JMenuBar {
 		
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		add(startPBGameButton, BorderLayout.SOUTH);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(startBBGameButton, BorderLayout.SOUTH);
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		
 		add(Box.createRigidArea(new Dimension(10, 10)));
