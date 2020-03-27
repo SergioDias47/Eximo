@@ -288,9 +288,9 @@ public class Eximo {
 	}
 	
 	private Board findBestBoard() {
-		List<Move> possibleMoves = findValidMoves(board, currentPlayer);
+		List<Move> possibleMoves = findValidMoves(this.board, currentPlayer);
 		List<Pair> moveBoards = new ArrayList<Pair>();
-		moveBoards.addAll(generateBoards(possibleMoves, currentPlayer));
+		moveBoards.addAll(generateBoards(this.board, possibleMoves, currentPlayer));
 		int bestScore = Integer.MIN_VALUE;
 		Board bestBoard = new Board(); 
 		for(Pair moveBoard : moveBoards) {
@@ -309,6 +309,11 @@ public class Eximo {
 
 	private int minimax(Board board, boolean isMaximizing, int depth) {
 		int currentScore = evaluateMove(board); 
+		if (depth == 1) {
+			System.out.println("Depth = " + depth + "  Current Board: ");
+			board.print();
+			System.out.println("Score:  " + currentScore);
+		}
 		int bestScore;
 		int player;
 		if (isMaximizing) {
@@ -331,7 +336,7 @@ public class Eximo {
 		
 		List<Move> possibleMoves = findValidMoves(board, player);
 		List<Pair> moveBoards = new ArrayList<Pair>();
-		moveBoards.addAll(generateBoards(possibleMoves, player));
+		moveBoards.addAll(generateBoards(board, possibleMoves, player));
 		
 		for(Pair moveBoard : moveBoards) {
 			int newScore = minimax(moveBoard.first(), !isMaximizing, depth - 1);
@@ -399,13 +404,13 @@ public class Eximo {
 	}
 	
 	/* Generates all the boards from a given set of valid moves */
-	List<Pair> generateBoards(List<Move> validMoves, int player) {
+	List<Pair> generateBoards(Board board, List<Move> validMoves, int player) {
 		List<Pair> boards = new ArrayList<Pair>();
 		for (Move move : validMoves) {
 			if (move.isCapture() || move.isJumpOver()) {
-				boards.addAll(getSubsequentialBoards(this.board, move, player));
+				boards.addAll(getSubsequentialBoards(board, move, player));
 			} else {
-				boards.add(new Pair(emulateMove(this.board, move, player), move));
+				boards.add(new Pair(emulateMove(board, move, player), move));
 			}	
 		}
 		return boards;

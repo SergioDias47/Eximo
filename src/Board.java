@@ -71,9 +71,7 @@ public class Board {
 			Position pos = new Position(position);
 			if(cells[position] == player) {
 				evaluation += (player == 1)? pos.y : (7 - pos.y);
-			} else if(cells[position] == Utils.otherPlayer(player)){
-				evaluation -= (player == 1)? (7 - pos.y) : pos.y;
-			}
+			} 
 		}
 		return evaluation;
 	}
