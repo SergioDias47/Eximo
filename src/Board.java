@@ -65,15 +65,14 @@ public class Board {
 	/* Evaluates a board when it comes to the pieces' position in the ambit of a given player.
 	 * 	The closer the pieces of the given player are to the opponent's area, the higher the returned evaluation will be. 
 	 * 	The closer the pieces of the opponent are to the given player's area, the lower the returned evaluation will be. */
-	public int evalutatePositioning(int player) {
+	public int evaluatePositioning(int player) {
 		int evaluation = 0;
-		for(int cell : cells) {
-			if(cell == player) {
-				Position pos = new Position(cell);
-				evaluation += (player == 1)? pos.y : 7 - pos.y;
-			} else if(cell == Utils.otherPlayer(player)){
-				Position pos = new Position(cell);
-				evaluation -= (player == 1)? 7 - pos.y : pos.y;
+		for(int position = 0; position < length(); position++) {
+			Position pos = new Position(position);
+			if(cells[position] == player) {
+				evaluation += (player == 1)? pos.y : (7 - pos.y);
+			} else if(cells[position] == Utils.otherPlayer(player)){
+				evaluation -= (player == 1)? (7 - pos.y) : pos.y;
 			}
 		}
 		return evaluation;
@@ -81,6 +80,7 @@ public class Board {
 	
 	public void print() {
 		System.out.println();
+		System.out.println("---------------------------------");
 		for (int i = 0; i < 8; i++) {
 			System.out.print("|");
 			for (int j = 0; j < 8; j++) {

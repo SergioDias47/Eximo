@@ -22,7 +22,8 @@ public class Move {
 		return endPos.x >= 0 && 
 				endPos.x < Constants.LINE_LENGTH && 
 				 endPos.y >= 0 && 
-				  endPos.y < Constants.LINE_LENGTH;
+				  endPos.y < Constants.LINE_LENGTH &&
+				  	(endPos.y - startPos.y <= 2 && endPos.x - startPos.x <= 2); 
 	}
 	
 	public boolean setCaptured() {
@@ -57,8 +58,5 @@ public class Move {
 		System.out.println("-----------------------");
 		System.out.println("startPos: " + startPos + "    endPos: " + endPos + "  Captured: " + captured);
 		System.out.println("next moves: " + nextMoves.size());
-		for(Move m : nextMoves) {
-			m.print();
-		}
 	}
 }

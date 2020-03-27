@@ -59,5 +59,11 @@ public class BoardPanel extends JPanel {
 		buttons[id].highlight();
 	}
 	
+	public void printBoard(Board board) {
+		for(int i = 0; i < board.length(); i++) {
+			setIconAt(i, board.getCell(i));
+		}
+	}
+	
 	
 }
