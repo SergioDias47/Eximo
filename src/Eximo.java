@@ -79,8 +79,9 @@ public class Eximo {
 	
 	/* Generates all the possible basic moves from a given position in the board */
 	public List<Move> generateMoves(Board board, int player, int startPos) {
-		List<Move> moves = generateAllCaptureMoves(board, player); // checking if there are any capture moves possible
+		List<Move> moves = new ArrayList<Move>();
 		if (board.getCell(startPos) != player) return moves;
+		moves = generateAllCaptureMoves(board, player); // checking if there are any capture moves possible
 		
 		if (moves.size() != 0) {
 			return generateCaptureMoves(board, player, startPos);
@@ -277,10 +278,13 @@ public class Eximo {
 	
 	/* Handles the bot's moves */
 	public void botMove() {
+		long startTime = System.currentTimeMillis();
 		this.board = findBestBoard();
 		gui.getBoard().printBoard(this.board);
 		nextPlayer();
 		if(gameOver()) return;
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed time: " + estimatedTime);
 	}
 	
 	private int evaluateMove(Board resultingBoard) {
@@ -294,7 +298,7 @@ public class Eximo {
 		int bestScore = Integer.MIN_VALUE;
 		Board bestBoard = new Board(); 
 		for(Pair moveBoard : moveBoards) {
-			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 2);
+			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestBoard = moveBoard.first();
@@ -304,7 +308,7 @@ public class Eximo {
 	}
 
 	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
-		long startTime = System.currentTimeMillis();
+		
 		int currentScore = evaluateMove(board); 
 		int bestScore;
 		int player;
@@ -317,12 +321,11 @@ public class Eximo {
 		} else {
 			player = Utils.otherPlayer(currentPlayer);
 			if(checkWinner(board, player)) {
-				return Integer.MIN_VALUE;
+				return Integer.MAX_VALUE;
 			}
 			bestScore = Integer.MAX_VALUE;
 		}
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Elapsed time: " + estimatedTime);
+		
 		
 		if(depth == 1) {
 			return currentScore;
