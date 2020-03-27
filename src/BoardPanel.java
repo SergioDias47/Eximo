@@ -19,7 +19,6 @@ public class BoardPanel extends JPanel {
 			add(buttons[i]);
 		}
 		initialize();
-		//initializeDebugBoard();
 	}
 	
 	/*

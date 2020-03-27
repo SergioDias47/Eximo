@@ -294,11 +294,7 @@ public class Eximo {
 		int bestScore = Integer.MIN_VALUE;
 		Board bestBoard = new Board(); 
 		for(Pair moveBoard : moveBoards) {
-			int newScore = minimax(moveBoard.first(), false, 2);
-			/*System.out.println("FIND BEST MOVE");
-			moveBoard.second().print();
-			System.out.println("\nRating: " + newScore + "         Best: " + bestScore);
-			System.out.println("----------");*/
+			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 2);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestBoard = moveBoard.first();
@@ -307,13 +303,9 @@ public class Eximo {
 		return bestBoard;
 	}
 
-	private int minimax(Board board, boolean isMaximizing, int depth) {
+	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
+		long startTime = System.currentTimeMillis();
 		int currentScore = evaluateMove(board); 
-		if (depth == 1) {
-			System.out.println("Depth = " + depth + "  Current Board: ");
-			board.print();
-			System.out.println("Score:  " + currentScore);
-		}
 		int bestScore;
 		int player;
 		if (isMaximizing) {
@@ -329,6 +321,8 @@ public class Eximo {
 			}
 			bestScore = Integer.MAX_VALUE;
 		}
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed time: " + estimatedTime);
 		
 		if(depth == 1) {
 			return currentScore;
@@ -338,12 +332,22 @@ public class Eximo {
 		List<Pair> moveBoards = new ArrayList<Pair>();
 		moveBoards.addAll(generateBoards(board, possibleMoves, player));
 		
+		
 		for(Pair moveBoard : moveBoards) {
-			int newScore = minimax(moveBoard.first(), !isMaximizing, depth - 1);
-			if (isMaximizing) 
+			int newScore = minimax(moveBoard.first(), !isMaximizing, alpha, beta, depth - 1);
+			if (isMaximizing) {
 				bestScore = Integer.max(bestScore, newScore);
-			else bestScore = Integer.min(bestScore, newScore);
+				alpha = Integer.max(alpha, newScore);
+				if(beta <= alpha)
+					break;
+			} else {
+				bestScore = Integer.min(bestScore, newScore);
+				beta = Integer.min(beta, newScore);
+				if(beta <= alpha)
+					break;
+			}
 		}
+		
 		return bestScore;
 	}
 	
