@@ -100,9 +100,7 @@ public class Controller implements ActionListener, KeyListener {
 	
 	public void highlightMoves() {
 		gui.getBoard().highlightAt(firstSelection);
-		possibleMoves = game.generateCaptureMoves(firstSelection);
-		if(possibleMoves.isEmpty() && game.generateAllCaptureMoves().isEmpty())
-			possibleMoves = game.generateMoves(firstSelection); 
+		possibleMoves = game.generateMoves(firstSelection);
 		for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos());
 	}
 	

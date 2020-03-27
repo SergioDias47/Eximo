@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,7 @@ public class Eximo {
 		this.gui = gui;
 	}
 	
+	/* Finds all the valid moves that the current player can make*/
 	public List<Move> findValidMoves() {
 		List<Move> validMoves = new ArrayList<Move>();
 		
@@ -40,6 +43,7 @@ public class Eximo {
 		return jumpOverMoves;
 	}
 	
+	/* Generates all the capture moves that player can make */
 	public List<Move> generateAllCaptureMoves() {
 		List<Move> captureMoves = new ArrayList<Move>();
 		
@@ -74,8 +78,12 @@ public class Eximo {
 	
 	/* Generates all the possible basic moves from a given position in the board */
 	public List<Move> generateMoves(int startPos) {
-		List<Move> moves = new ArrayList<Move>();
+		List<Move> moves = generateAllCaptureMoves(); // checking if there are any capture moves possible
 		if (board.getCell(startPos) != currentPlayer) return moves;
+		
+		if (moves.size() != 0) {
+			return moves;
+		}
 		
 		for (int direction : Constants.FrontDirections) {
 			Move simpleMove = checkSimpleMove(startPos, direction);
@@ -134,16 +142,19 @@ public class Eximo {
 		return null;
 	}
 	
+	/* Passes the turn to the next player */
 	public void nextPlayer() {
 		currentPlayer = Utils.otherPlayer(currentPlayer);
 		gui.updateMatchInfo(board.countPieces(Constants.PLAYER_1), board.countPieces(Constants.PLAYER_2));
 	}
 	
+	/* Empties the cell in the given position */
 	public void emptyCell(int position) {
 		board.setCell(position, Constants.EMPTY_CELL);
 		gui.getBoard().setIconAt(position, Constants.EMPTY_CELL);
 	}
 	
+	/* Fills the cell in the given position with the current player's piece */
 	public void fillCell(int position) {
 		board.setCell(position, currentPlayer);
 		gui.getBoard().setIconAt(position, currentPlayer);
@@ -153,21 +164,15 @@ public class Eximo {
 		return currentPlayer;
 	}
 	
+	/* Handles the player's moves */ 
 	public void playerMove(Move move) {
+		this.board.print();
 		int startP = move.startPos.toBoardPos();
 		int endP = move.endPos.toBoardPos();
 		if (board.getCell((endP+startP)/2) == Utils.otherPlayer(currentPlayer))
 			move.setCaptured();
-		List<Move> captureMoves = generateAllCaptureMoves();
-		if (captureMoves.size() != 0) {
-			if (!captureMoves.contains(move)) {
-				return;
-			}
-		} else if (!generateMoves(startP).contains(move)) {
+		if (!generateMoves(startP).contains(move)) {
 			return;
-		}
-		for (Move m : generateMoves(startP)) {
-			emulateMove(this.board, m, currentPlayer);
 		}
 		System.out.println("Player turn: " + currentPlayer);
 		emptyCell(startP);
@@ -188,13 +193,14 @@ public class Eximo {
 		}
 		if (!reachedEndOfBoard(endP)) 
 			nextPlayer();
-		//if(gameOver()) return;
+		if(gameOver()) return;
 		
 		if(gamemode == Constants.PLAYER_VS_BOT) {
 			botMove();
 		}
 	}
 	
+	/* Verifies whether a piece has reached the end of the board */
 	public boolean reachedEndOfBoard(int endPos) {
 		if ((currentPlayer == Constants.PLAYER_1 && endPos/Constants.LINE_LENGTH == 7) 
 				|| (currentPlayer == Constants.PLAYER_2 && endPos/Constants.LINE_LENGTH == 0)) {
@@ -218,6 +224,7 @@ public class Eximo {
 		return true;
 	}
 	
+	/* Handles the case when a player makes multiple jumpOver moves in one turn */
 	public void sequentialJumpOver(Move move) {
 		int startP = move.startPos.toBoardPos();
 		int endP = move.endPos.toBoardPos();
@@ -233,6 +240,7 @@ public class Eximo {
 			}
 	}
 	
+	/* Handles the case when a player makes multiple capture moves in one turn */
 	public void sequentialCapture(Move move) {
 		int startP = move.startPos.toBoardPos();
 		int endP = move.endPos.toBoardPos();
@@ -250,6 +258,7 @@ public class Eximo {
 			}
 	}
 	
+	/* Handles the bot's moves */
 	public void botMove() {
 		List<Move> possibleMoves = findValidMoves();
 		Random ran = new Random();
@@ -285,6 +294,7 @@ public class Eximo {
 		return piecesToPlace;
 	}
 
+	/* Handles game over */
 	public boolean gameOver() {
 		if(generateAllCaptureMoves().isEmpty() && findValidMoves().isEmpty()) {
 			// handles game over
@@ -294,6 +304,7 @@ public class Eximo {
 		return false;
 	}
 
+	/* Adds a piece to a certain position only if it's in the drop zone. Used when a piece reaches the end of the board */
 	public void addPieceAt(int position) {
 		System.out.println("Pieces: "+ piecesToPlace);
 		if(Utils.isWithinSafeZone(currentPlayer, position) && board.getCell(position) == Constants.EMPTY_CELL) {
@@ -303,6 +314,7 @@ public class Eximo {
 		if (piecesToPlace == 0) nextPlayer();
 	}
 	
+	/* Returns the modified board after executing a certain move */
 	Board emulateMove(Board currentBoard, Move move, int player) {
 		Board boardRes = new Board(currentBoard);
 		int startPos = move.startPos.toBoardPos();
@@ -316,6 +328,37 @@ public class Eximo {
 		return boardRes;
 	}
 	
+	/* Generates all the boards from a given set of valid moves */
+	List<Board> generateBoards(List<Move> validMoves, int player) {
+		List<Board> boards = new ArrayList<Board>();
+		for (Move move : validMoves) {
+			if (move.isCapture() || move.isJumpOver()) {
+				boards.addAll(getSubsequentialBoards(this.board, move, player));
+			} else {
+				boards.add(emulateMove(this.board, move, player));
+			}	
+		}
+		return boards;
+	}
 	
-	
+	/* Generates the boards that are the result of multiple jumpOver and capture moves in one turn */
+	List<Board> getSubsequentialBoards(Board board, Move move, int player) {
+		List<Board> boards = new ArrayList<Board>();
+		Queue<Pair> queue = new LinkedList<>();
+		queue.add(new Pair(board, move));
+		while(!queue.isEmpty()) {
+			Pair pair = queue.remove();
+			Board newBoard = emulateMove(pair.first(), pair.second(), player);
+			List<Move> nextMoves = pair.second().nextMoves;
+			if (nextMoves.isEmpty()) {
+				boards.add(newBoard);
+			} else {
+				for (Move m : nextMoves) {
+					queue.add(new Pair(newBoard, m));
+				}
+			}
+		}
+		return boards;
+	}
+
 }

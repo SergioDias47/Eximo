@@ -78,4 +78,18 @@ public class Board {
 		}
 		return evaluation;
 	}
+	
+	public void print() {
+		System.out.println();
+		for (int i = 0; i < 8; i++) {
+			System.out.print("|");
+			for (int j = 0; j < 8; j++) {
+				System.out.print(" " + (cells[i*8 + j] == 0 ? " " : cells[i*8 + j]) + (j == 7 ? " " : " |"));
+			}
+			System.out.print("|");
+			System.out.println();
+			System.out.println("---------------------------------");
+		}
+		System.out.println();
+	}
 }
