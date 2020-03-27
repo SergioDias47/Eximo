@@ -40,7 +40,7 @@ public class Eximo {
 		if (board.getCell(startPos) != player) return jumpOverMoves;
 		for (int direction : Constants.FrontDirections) {
 			Move jumpOver = checkJumpOver(board, player, startPos, direction);
-			if(jumpOver != null) jumpOverMoves.add(jumpOver);
+			if(jumpOver != null && jumpOver.checkBoundaries()) jumpOverMoves.add(jumpOver);
 		}
 		return jumpOverMoves;
 	}
@@ -70,6 +70,8 @@ public class Eximo {
 		if(captureEast != null) captureMoves.add(captureEast);
 		
 		for (Move capture : captureMoves) {
+			if(!capture.checkBoundaries())
+				continue;
 			int endPos = capture.endPos.toBoardPos();
 			board.setCell(endPos, player);
 			capture.nextMoves.addAll(generateCaptureMoves(board, player, endPos));
@@ -299,7 +301,7 @@ public class Eximo {
 		int bestScore = Integer.MIN_VALUE;
 		Board bestBoard = new Board(); 
 		for(Pair moveBoard : moveBoards) {
-			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
+			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 2);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestBoard = moveBoard.first();
@@ -428,18 +430,15 @@ public class Eximo {
 	
 	private List<Pair> getBoardsWithExtraPieces(Board board, Move move, int player) {
 		List<Pair> boards = new ArrayList<Pair>();
-		System.out.println(board.countSafeZoneFreeCells(player));
 		switch(board.countSafeZoneFreeCells(player)) {
 			case 0:
 				boards.add(new Pair(board, move));
 				break;
-			case 2:
-				System.out.println("entrou no case 2");
+			default:
 				for(int position = 0; position < board.length(); position++) {
 					if(Utils.isWithinSafeZone(player, position) && board.getCell(position) == Constants.EMPTY_CELL) {
-						System.out.println(move.endPos.toBoardPos());
 						Board copy = new Board(board);
-						copy.setCell(move.endPos.toBoardPos(), Constants.EMPTY_CELL); // deletes the piece that reached the end of board
+						copy.setCell(move.startPos.toBoardPos(), Constants.EMPTY_CELL); // deletes the piece that reached the end of board
 						copy.setCell(position, player);
 						boards.add(new Pair(copy, move));
 					}
