@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -416,13 +417,40 @@ public class Eximo {
 		for (Move move : validMoves) {
 			if (move.isCapture() || move.isJumpOver()) {
 				boards.addAll(getSubsequentialBoards(board, move, player));
+			} else if((move.endPos.y == 7 && player == 1) || (move.endPos.y == 0 && player == 2)){
+				boards.addAll(getBoardsWithExtraPieces(board, move, player));
 			} else {
 				boards.add(new Pair(emulateMove(board, move, player), move));
-			}	
+			}
 		}
 		return boards;
 	}
 	
+	private List<Pair> getBoardsWithExtraPieces(Board board, Move move, int player) {
+		List<Pair> boards = new ArrayList<Pair>();
+		System.out.println(board.countSafeZoneFreeCells(player));
+		switch(board.countSafeZoneFreeCells(player)) {
+			case 0:
+				boards.add(new Pair(board, move));
+				break;
+			case 2:
+				System.out.println("entrou no case 2");
+				for(int position = 0; position < board.length(); position++) {
+					if(Utils.isWithinSafeZone(player, position) && board.getCell(position) == Constants.EMPTY_CELL) {
+						System.out.println(move.endPos.toBoardPos());
+						Board copy = new Board(board);
+						copy.setCell(move.endPos.toBoardPos(), Constants.EMPTY_CELL); // deletes the piece that reached the end of board
+						copy.setCell(position, player);
+						boards.add(new Pair(copy, move));
+					}
+				}
+				break;
+			case 4:
+				break;
+		}
+		return boards;
+	}
+
 	/* Generates the boards that are the result of multiple jumpOver and capture moves in one turn */
 	List<Pair> getSubsequentialBoards(Board board, Move move, int player) {
 		List<Pair> boards = new ArrayList<Pair>();
