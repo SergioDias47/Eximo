@@ -20,6 +20,12 @@ public class Eximo {
 		this.board = new Board();
 		currentPlayer = Constants.PLAYER_1;
 		this.gui = gui;
+		if(gamemode == Constants.BOT_VS_BOT) {
+			new Thread() {
+				  public void run() {
+					  botMove();
+				  }}.start();
+		}
 	}
 	
 	/* Finds all the valid moves that the current player can make*/
@@ -288,6 +294,7 @@ public class Eximo {
 		if(gameOver()) return;
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Elapsed time: " + estimatedTime);
+		botMove();
 	}
 	
 	private int evaluateMove(Board resultingBoard) {
@@ -301,7 +308,7 @@ public class Eximo {
 		int bestScore = Integer.MIN_VALUE;
 		Board bestBoard = new Board(); 
 		for(Pair moveBoard : moveBoards) {
-			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 2);
+			int newScore = minimax(moveBoard.first(), false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestBoard = moveBoard.first();

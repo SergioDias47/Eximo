@@ -37,7 +37,10 @@ public class Controller implements ActionListener, KeyListener {
 				removeHighlights();
 				switch (game.getMoveState()) {
 					case Constants.NORMAL: 
-						game.playerMove(attemptedMove);
+						new Thread() {
+							  public void run() {
+								  game.playerMove(attemptedMove);
+							  }}.start();
 						break;
 					case Constants.JUMP_OVER:
 						game.sequentialJumpOver(attemptedMove);
@@ -58,7 +61,7 @@ public class Controller implements ActionListener, KeyListener {
 				case "PB":
 					game = new Eximo(Constants.PLAYER_VS_BOT, gui);
 					gui.switchPanel(Constants.GAME_PANEL);
-					gui.setGamePanelListener(this);
+					//gui.setGamePanelListener(this);
 					break;
 				case "BB":
 					game = new Eximo(Constants.BOT_VS_BOT, gui);

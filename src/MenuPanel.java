@@ -102,6 +102,7 @@ public class MenuPanel extends JMenuBar {
 	public void setButtonListeners(Controller ctrl) {
 		startPPGameButton.addActionListener(ctrl);
 		startPBGameButton.addActionListener(ctrl);
+		startBBGameButton.addActionListener(ctrl);
 		exitButton.addActionListener(ctrl);
 	}
 
