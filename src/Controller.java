@@ -10,63 +10,51 @@ public class Controller implements ActionListener, KeyListener {
 
 	private UI gui;
 	private Eximo game;
-	private int firstSelection = -1;
-	private List<Move> possibleMoves;
+	private String firstSelected;
 	
 	public Controller() {
+		firstSelected = Constants.NONE_SELECTED;
 		//UI
 		gui = new UI();
 		gui.setMenuListener(this);
 		gui.setKeyListener(this);
-		possibleMoves = new ArrayList<Move>();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
-			int buttonID = Integer.parseInt(((Component) e.getSource()).getName());
-			if(game.getPiecesToPlace() > 0) {
-				game.addPieceAt(buttonID);
-				return;
-			}
-			if(firstSelection == -1) {
-				firstSelection = buttonID;
-				highlightMoves();
+			String buttonName = ((Component) e.getSource()).getName();
+			
+			if(firstSelected.equals(Constants.NONE_SELECTED)) {
+				firstSelected = buttonName;
 			} else {
-				Move attemptedMove = new Move(firstSelection, buttonID);
-				removeHighlights();
-				switch (game.getMoveState()) {
-					case Constants.NORMAL: 
-						new Thread() {
-							  public void run() {
-								  game.playerMove(attemptedMove);
-							  }}.start();
-						break;
-					case Constants.JUMP_OVER:
-						game.sequentialJumpOver(attemptedMove);
-						break;
-					case Constants.CAPTURE:
-						game.sequentialCapture(attemptedMove);
-				}
-				firstSelection = -1;
+				Position startP = Utils.getButtonPos(firstSelected);
+				Position endP = Utils.getButtonPos(buttonName);
+				new Thread() {
+					  public void run() {
+						  game.playerMove(startP, endP);
+				}}.start();
+				firstSelected = Constants.NONE_SELECTED;
 			}
 		} else {
 			String buttonName = ((Component) e.getSource()).getName();
 			switch(buttonName) {
 				case "PP":
-					game = new Eximo(Constants.PLAYER_VS_PLAYER, gui);
+					game = new Eximo(gui, Constants.PLAYER_VS_PLAYER);
 					gui.switchPanel(Constants.GAME_PANEL);
 					gui.setGamePanelListener(this);
+					game.printCurrentBoard();
 					break;
 				case "PB":
-					game = new Eximo(Constants.PLAYER_VS_BOT, gui);
+					game = new Eximo(gui, Constants.PLAYER_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
 					gui.setGamePanelListener(this);
 					break;
 				case "BB":
-					game = new Eximo(Constants.BOT_VS_BOT, gui);
+					game = new Eximo(gui, Constants.BOT_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
-					gui.setGamePanelListener(this);
+					game.printCurrentBoard();
+					//gui.setGamePanelListener(this);
 					break;
 				case "exit":
 					gui.exit();
@@ -83,9 +71,9 @@ public class Controller implements ActionListener, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		if(key == KeyEvent.VK_R) {
-			if(firstSelection != -1)
+			if(firstSelected != Constants.NONE_SELECTED)
 				removeHighlights();
-			firstSelection = -1;
+			firstSelected = Constants.NONE_SELECTED;
 		}
 		if(key == KeyEvent.VK_ESCAPE) {
 			if(game != null)
@@ -102,22 +90,20 @@ public class Controller implements ActionListener, KeyListener {
 	}
 	
 	public void highlightMoves() {
-		gui.getBoard().highlightAt(firstSelection);
-		possibleMoves = game.generateMoves(game.getBoard(), game.getCurrentPlayer(), firstSelection);
-		for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos());
+		//gui.getBoard().highlightAt(firstSelection);
+		//possibleMoves = game.generateMoves(game.getBoard(), game.getCurrentPlayer(), firstSelection);
+		//for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos());
 	}
 	
 	public void removeHighlights() {
-		gui.getBoard().highlightAt(firstSelection);
-		for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos()); 
+		//gui.getBoard().highlightAt(firstSelection);
+		//for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos()); 
 	}
 	
 	public void goBackToMenu() {
-		game.killThread();
 		game = null;
 		gui.switchPanel(Constants.MENU_PANEL);
-		firstSelection = -1;
-		possibleMoves.clear();
+		firstSelected = Constants.NONE_SELECTED;
 	}
 	
 	

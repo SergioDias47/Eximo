@@ -1,4 +1,3 @@
-
 public class Utils {
 	public static int otherPlayer(int currentPlayer) {
 		return currentPlayer % 2 + 1;
@@ -26,6 +25,19 @@ public class Utils {
         }
         return false;
     }
+	
+	public static String getButtonName(Position pos) {
+		return pos.x + "," + pos.y;
+	}
+	
+	public static Position getButtonPos(String name) {
+		String[] parts = name.split(",");
+		if(parts.length != 2) {
+			System.err.println("Parsing invalid button name!");
+			return new Position(Constants.ERROR, Constants.ERROR);
+		}
+		return new Position(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+	}
 	
 	
 }
