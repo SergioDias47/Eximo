@@ -14,6 +14,7 @@ public class Eximo {
 	private UI gui;
 	private int moveState = Constants.NORMAL;
 	private int piecesToPlace = 0;
+	private boolean stopWorking;
 	
 	public Eximo(int gamemode, UI gui) {
 		this.gamemode = gamemode;
@@ -21,13 +22,18 @@ public class Eximo {
 		currentPlayer = Constants.PLAYER_1;
 		this.gui = gui;
 		if(gamemode == Constants.BOT_VS_BOT) {
-			new Thread() {
-				  public void run() {
-					  botMove();
-				  }}.start();
+			startBotWork();
 		}
 	}
 	
+	private void startBotWork() {
+		stopWorking = false;
+		new Thread() {
+			  public void run() {
+				  botMove();
+		}}.start();
+	}
+
 	/* Finds all the valid moves that the current player can make*/
 	public List<Move> findValidMoves(Board board, int player) {
 		List<Move> validMoves = new ArrayList<Move>();
@@ -289,12 +295,21 @@ public class Eximo {
 	public void botMove() {
 		long startTime = System.currentTimeMillis();
 		this.board = findBestBoard();
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.println("Elapsed time: " + elapsedTime);
+		int delay = Integer.max((int) (Constants.MIN_DELAY - elapsedTime), 0);
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		gui.getBoard().printBoard(this.board);
 		nextPlayer();
 		if(gameOver()) return;
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println("Elapsed time: " + estimatedTime);
-		botMove();
+		if(gamemode == Constants.BOT_VS_BOT) {
+			if(stopWorking) return;
+			botMove();
+		}
 	}
 	
 	private int evaluateMove(Board resultingBoard) {
@@ -318,7 +333,7 @@ public class Eximo {
 	}
 
 	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
-		
+		if(stopWorking) return 0;
 		int currentScore = evaluateMove(board); 
 		int bestScore;
 		int player;
@@ -424,10 +439,10 @@ public class Eximo {
 	List<Pair> generateBoards(Board board, List<Move> validMoves, int player) {
 		List<Pair> boards = new ArrayList<Pair>();
 		for (Move move : validMoves) {
-			if (move.isCapture() || move.isJumpOver()) {
-				boards.addAll(getSubsequentialBoards(board, move, player));
-			} else if((move.endPos.y == 7 && player == 1) || (move.endPos.y == 0 && player == 2)){
+			if((move.endPos.y == 7 && player == 1) || (move.endPos.y == 0 && player == 2)){
 				boards.addAll(getBoardsWithExtraPieces(board, move, player));
+			} else if (move.isCapture() || move.isJumpOver()) {
+				boards.addAll(getSubsequentialBoards(board, move, player));
 			} else {
 				boards.add(new Pair(emulateMove(board, move, player), move));
 			}
@@ -437,21 +452,20 @@ public class Eximo {
 	
 	private List<Pair> getBoardsWithExtraPieces(Board board, Move move, int player) {
 		List<Pair> boards = new ArrayList<Pair>();
-		switch(board.countSafeZoneFreeCells(player)) {
+		Board newBoard = new Board(board);
+		newBoard.setCell(move.startPos.toBoardPos(), Constants.EMPTY_CELL); // deletes the piece that reached the end of board
+		switch(newBoard.countSafeZoneFreeCells(player)) {
 			case 0:
-				boards.add(new Pair(board, move));
+				boards.add(new Pair(newBoard, move));
 				break;
 			default:
 				for(int position = 0; position < board.length(); position++) {
 					if(Utils.isWithinSafeZone(player, position) && board.getCell(position) == Constants.EMPTY_CELL) {
-						Board copy = new Board(board);
-						copy.setCell(move.startPos.toBoardPos(), Constants.EMPTY_CELL); // deletes the piece that reached the end of board
+						Board copy = new Board(newBoard);
 						copy.setCell(position, player);
 						boards.add(new Pair(copy, move));
 					}
 				}
-				break;
-			case 4:
 				break;
 		}
 		return boards;
@@ -465,16 +479,25 @@ public class Eximo {
 		while(!queue.isEmpty()) {
 			Pair pair = queue.remove();
 			Board newBoard = emulateMove(pair.first(), pair.second(), player);
-			List<Move> nextMoves = pair.second().nextMoves;
-			if (nextMoves.isEmpty()) {
-				boards.add(new Pair(newBoard,move));
-			} else {
-				for (Move m : nextMoves) {
-					queue.add(new Pair(newBoard, m));
+			if((pair.second().endPos.y == 7 && player == 1) || (pair.second().endPos.y == 0 && player == 2)){
+				boards.addAll(getBoardsWithExtraPieces(newBoard, pair.second(), player));
+			}
+			else {
+				List<Move> nextMoves = pair.second().nextMoves;
+				if (nextMoves.isEmpty()) {
+					boards.add(new Pair(newBoard,move));
+				} else {
+					for (Move m : nextMoves) {
+						queue.add(new Pair(newBoard, m));
+					}
 				}
 			}
 		}
 		return boards;
+	}
+
+	public void killThread() {
+		stopWorking = true;
 	}
 
 }

@@ -23,7 +23,7 @@ public class Move {
 				endPos.x < Constants.LINE_LENGTH && 
 				 endPos.y >= 0 && 
 				  endPos.y < Constants.LINE_LENGTH &&
-				  	(endPos.y - startPos.y <= 2 && endPos.x - startPos.x <= 2); 
+				  	(Math.abs(endPos.y - startPos.y) <= 2 && Math.abs(endPos.x - startPos.x) <= 2); 
 	}
 	
 	public boolean setCaptured() {

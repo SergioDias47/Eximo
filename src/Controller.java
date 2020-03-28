@@ -61,7 +61,7 @@ public class Controller implements ActionListener, KeyListener {
 				case "PB":
 					game = new Eximo(Constants.PLAYER_VS_BOT, gui);
 					gui.switchPanel(Constants.GAME_PANEL);
-					//gui.setGamePanelListener(this);
+					gui.setGamePanelListener(this);
 					break;
 				case "BB":
 					game = new Eximo(Constants.BOT_VS_BOT, gui);
@@ -113,6 +113,7 @@ public class Controller implements ActionListener, KeyListener {
 	}
 	
 	public void goBackToMenu() {
+		game.killThread();
 		game = null;
 		gui.switchPanel(Constants.MENU_PANEL);
 		firstSelection = -1;
