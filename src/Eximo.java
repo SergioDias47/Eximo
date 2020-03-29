@@ -5,10 +5,11 @@ import java.util.Scanner;
 
 public class Eximo {
 	
-	/* User interface & game mode */
+	/* User interface, game mode, execution time */
 	private UI gui;
 	private int gameMode;
 	private boolean stopWorking = false;
+	private long startTime;
 	
 	/* Game state */
     private int player;
@@ -29,6 +30,9 @@ public class Eximo {
         piecesToAdd = 0;
 	}
 	
+    /* 
+     * Initializes a new thread for bot work. 
+     */
 	private void startBotWork() {
 		stopWorking = false;
 		new Thread() {
@@ -37,33 +41,50 @@ public class Eximo {
 		}}.start();
 	}
 	
+	/*
+	 * Stops the thread that executes the bot work.
+	 */
 	public void stopBotWork() {
 		stopWorking = true;
 	}
 
+	/*
+	 * Returns the current player.
+	 */
     public int getPlayer() {
         return player;
     }
     
+    /*
+     * Returns the number of extra pieces that a player has to place.
+     */
+    public int getPiecesToAdd() {
+    	return piecesToAdd;
+    }
+    
+    /*
+     * Ends the turn of a player, switching to the next one and requesting the UI to update the information. 
+     */
     public void nextPlayer() {
 		player = Utils.otherPlayer(player);
-		gui.updateMatchInfo(board.countPieces(Constants.PLAYER_1), board.countPieces(Constants.PLAYER_2));
+		gui.updateMatchInfo(board.countPieces(Constants.PLAYER_1), board.countPieces(Constants.PLAYER_2), gameOver());
 	}
     
+    /*
+     * Requests the UI to print the current board.
+     */
     public void printCurrentBoard() {
         gui.getBoard().printBoard(board);
     }
     
+    /* Handles a move input by a human */
     public void playerMove(Position startPos, Position endPos) {
-    	
-    	
     	boolean isValid = false;
-    	List<MoveSequence> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllBoards(board, player);
+    	List<MoveSequence> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllSequences(board, player);
     	List<MoveSequence> newForcedStates = new ArrayList<MoveSequence>();
     	Board nextBoard = emulateMove(new Move(startPos, endPos, board, player));
     	for(MoveSequence move : allMoves) {
     		if(move.getFirstBoard().equals(nextBoard)) {
-    			//move.print();
     			board = nextBoard;
     			isValid = true;
     			move.remove(0);
@@ -87,12 +108,13 @@ public class Eximo {
     		
     		if(forcedStates.size() == 0) {
         		nextPlayer();
+        		if(gameMode == Constants.PLAYER_VS_BOT) botMove();
         	}
     	}
     }
     
     public void addPieceAt(Position pos) {
-    	System.out.println("Chegou aqui com pos: "); pos.print();
+    	System.out.println("Extra piece added at "); pos.print();
     	if (Utils.isWithinDropZone(pos, player)) {
     		board.setCell(pos, player);
     		printCurrentBoard();
@@ -102,17 +124,14 @@ public class Eximo {
     		}
     	}
     }
-    
-    public int getPiecesToAdd() {
-    	return piecesToAdd;
-    }
 
-
-    /* Handles the bot's moves */
+    /*
+     * Handles the bot's moves.
+     */
 	public void botMove() {
 		
 		long startTime = System.currentTimeMillis();
-		MoveSequence chosenMove = findBestBoard();
+		MoveSequence chosenMove = findBestSequence();
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Elapsed time: " + elapsedTime);
 		int delay = Integer.max((int) (Constants.MIN_DELAY - elapsedTime), 0);
@@ -121,48 +140,62 @@ public class Eximo {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		board = chosenMove.getLastBoard();
-		printCurrentBoard();
+		/* For composed moves, each step (frame) will be sequentially displayed */
+		for(Board frame : chosenMove.getBoards()) {
+			board = frame;
+			printCurrentBoard();
+			try {
+				Thread.sleep(Constants.MIN_DELAY);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		nextPlayer();
 		if(gameOver()) return;
 		if(gameMode == Constants.BOT_VS_BOT) {
 			if(stopWorking) return;
-			botMove();
+			if(gameMode == Constants.BOT_VS_BOT) botMove();
 		}
 	}
 	
+	/*
+	 * Heuristic function used to evaluate each generated board.
+	 */
 	public static int heuristic(Board resultingBoard, int player) {
 		return resultingBoard.evaluatePositioning(player) + resultingBoard.countPieces(player)*15; 
 	}
 	
 	public boolean checkWinner(Board board, int player) {
-		if(generateAllBoards(board, player).isEmpty()) {
+		if(generateAllSequences(board, player).isEmpty()) {
 			return true;
 		}
 		return false;
 	}
 	
-	/* Handles game over */
+	/* 
+	 * Handles game over state.
+	*/
 	public boolean gameOver() {
 		if(checkWinner(board, player)) {
-			// handles game over
 			System.out.println("Game over! Player " + Utils.otherPlayer(player) + " wins!");
 			return true;
 		}
 		return false;
 	}
 	
-	private MoveSequence findBestBoard() {
-		List<MoveSequence> allMoves = generateAllBoards(board, player);
-		
-		Collections.sort(allMoves);
-		
+	/*
+	 * Returns the best sequence of moves to play in a given state of the game.
+	 */
+	private MoveSequence findBestSequence() {
+		startTime = System.currentTimeMillis();
+		List<MoveSequence> allMoves = generateAllSequences(board, player);
+		Collections.sort(allMoves); // sorting nodes for better performance
 		int bestScore = Integer.MIN_VALUE;
 		MoveSequence bestMove = new MoveSequence(); 
 		
 		for(MoveSequence move : allMoves) {
 			Board finalBoard = move.getLastBoard();
-			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
+			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, Constants.MINIMAX_DEPTH);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestMove = move;
@@ -171,6 +204,9 @@ public class Eximo {
 		return bestMove;
 	}
 
+	/*
+	 * Minimax algorithm with alpha/beta pruning.
+	 */
 	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
 		if(stopWorking) return 0;
 		int bestScore;
@@ -189,20 +225,20 @@ public class Eximo {
 			bestScore = Integer.MAX_VALUE;
 		}
 		
-		
-		if(depth == 1) {
+		if(depth == 1) { // we've gone into the desired depth, so it's time to rate the solutions
 			int currentScore = heuristic(board, this.player); 
 			return currentScore;
 		}
-		
-		List<MoveSequence> allMoves = generateAllBoards(board, player);
-		
+		List<MoveSequence> allMoves = generateAllSequences(board, player);
 		Collections.sort(allMoves);
 		
 		if(!isMaximizing)
 			Collections.reverse(allMoves);
 		
 		for(MoveSequence move : allMoves) {
+			if(System.currentTimeMillis() - startTime > Constants.MAX_SEARCH_TIME) { 
+				break; // time is up
+			}
 			Board finalBoard = move.getLastBoard();
 			int newScore = minimax(finalBoard, !isMaximizing, alpha, beta, depth - 1);
 			if (isMaximizing) {
@@ -220,11 +256,10 @@ public class Eximo {
 		return bestScore;
 	}
     
-    
-    
-    
-    
-    public List<MoveSequence> generateAllBoards(Board board, int player) {
+    /*
+     * Generates all the possible sequence of boards for a given game state. 
+     */
+    public List<MoveSequence> generateAllSequences(Board board, int player) {
         List<Board> boards = new ArrayList<Board>();
         
         /* For each cell of the board, we generate the board sequences from there */
@@ -255,7 +290,9 @@ public class Eximo {
         }
     }
 
-    /* Generates all the possible basic moves from a given position in the board */
+    /* 
+     * Generates all the possible basic moves from a given position in the board. 
+     */
 	public List<Board> generateBoards(Board board, int player, Position startPos) {
 		List<Board> boards = new ArrayList<Board>();
         if (board.getCell(startPos) != player) return boards;
@@ -274,7 +311,9 @@ public class Eximo {
 		return boards;
 	}
 
-    /* Generates all the capture moves that player can make */
+    /*
+     * Generates all the capture moves that player can make. 
+     */
 	public List<Board> generateAllCaptureBoards(Board board, int player) {
 		List<Board> captureMoves = new ArrayList<Board>();
 		
@@ -288,7 +327,9 @@ public class Eximo {
 		return captureMoves;
 	}
 	
-	/* Generates the valid capture moves from a given position */ 
+	/*
+	 * Generates the valid capture moves from a given position.
+	 */ 
 	public List<Board> generateCaptureBoards(Board board, int player, Position startPos) {
 		List<Board> captureBoards = new ArrayList<Board>();
 		if (board.getCell(startPos) != player) return captureBoards;
@@ -304,7 +345,9 @@ public class Eximo {
 		return captureBoards;
     }
     
-    /* Generates the valid jump over moves from a given position */ 
+    /* 
+     * Generates the valid jump over moves from a given position.
+     */ 
 	public List<Board> generateJumpOverBoards(Board board, int player, Position startPos) {
 		List<Board> jumpOverMoves = new ArrayList<Board>();
 		if (board.getCell(startPos) != player) return jumpOverMoves;
@@ -315,7 +358,9 @@ public class Eximo {
 		return jumpOverMoves;
 	}
 
-    /* Generating and checking a possible basic movement in a given direction */
+    /* 
+     * Generating and checking a possible basic movement in a given direction.
+     */
 	public Board checkSimpleMove(Board board, int player, Position startPos, int direction) {
         int sign = Utils.getSign(player);
         Position endPos = new Position(startPos.x + direction, startPos.y + sign);
@@ -328,7 +373,9 @@ public class Eximo {
 		return null;
     }
 
-    /* Generating and checking a possible jump over movement in a given direction */
+    /* 
+     * Generating and checking a possible jump over movement in a given direction.
+     */
 	public Board checkJumpOver(Board board, int player, Position startPos, int direction) {
         int sign = Utils.getSign(player);
         Position endPos = new Position(startPos.x + 2*direction, startPos.y + 2*sign);
@@ -341,7 +388,9 @@ public class Eximo {
 		return null;
     }
 
-    /* Generating and checking a possible capture movement in a given direction (only sides) */
+    /* 
+     * Generating and checking a possible capture movement in a given direction (only sides). 
+     */
 	public Board checkCaptureSide(Board board, int player, Position startPos, int direction) {
         Position endPos = new Position(startPos.x + 2*direction, startPos.y);
 		Move move = new Move(startPos, endPos, board, player);
@@ -353,7 +402,9 @@ public class Eximo {
 		return null;
 	}
 	
-	/* Generating and checking a possible capture movement in a given direction (only in front) */
+	/* 
+	 * Generating and checking a possible capture movement in a given direction (only in front). 
+	 */
 	public Board checkCaptureFront(Board board, int player, Position startPos, int direction) {
 		int sign = Utils.getSign(player);
         Position endPos = new Position(startPos.x + 2*direction, startPos.y + 2*sign);
@@ -366,6 +417,9 @@ public class Eximo {
 		return null;
     }
     
+	/*
+	 * Generates the subsequent boards that result from a mandatory move.
+	 */
     public void generateNextBoards(Board boardRes, Move move) {
     	if (reachedEndOfBoard(boardRes, move.player)) return;
         List<Board> nextBoards = new ArrayList<Board>();
@@ -379,6 +433,9 @@ public class Eximo {
         }
     }
 
+    /*
+     * Handles the event that occurs when a player has a piece reach the end of the board.
+     */
     public boolean reachedEndOfBoard(Board board, int player) {
         if (board.pieceReachedEnd) {
         	List<Position> dropZoneCells = board.getDropZoneCells(player);
@@ -410,6 +467,9 @@ public class Eximo {
         return false;
     }
     
+    /*
+     * Executes a move on a board that is returned.
+     */
     public Board emulateMove(Move move) {
         Board boardRes = new Board(move.board);
         boardRes.setCell(move.startPos, Constants.EMPTY_CELL);
@@ -422,5 +482,22 @@ public class Eximo {
         	boardRes.setCell(move.endPos, Constants.EMPTY_CELL);
         }
         return boardRes;
+    }
+    
+    /*
+     * Requests the UI to highlight the spots that can be selected as the end position of a move.
+     */
+    public void highlightAvailableMoves(Position startPos) {
+    	if(board.getCell(startPos) != player)
+    		return;
+    	List<MoveSequence> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllSequences(board, player);
+    	for(MoveSequence move : allMoves) {
+    		Board firstBoard = move.getFirstBoard();
+    		if(firstBoard.getCell(startPos) == Constants.EMPTY_CELL) {
+    			List<Position> positionsToHighlight = firstBoard.getNewPositions(board, player);
+    			for(Position pos : positionsToHighlight)
+    				gui.getBoard().highlightAt(pos);
+    		}
+    	}
     }
 }

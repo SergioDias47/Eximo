@@ -37,11 +37,11 @@ public class BoardButton extends JButton{
 	}
 	
 	public void highlight() {
-		if(highlighted != getBorder()) {
-			setBorder(highlighted);
-		} else {
-			setBorder(new JButton().getBorder()); // sets the border to default
-		}
+		setBorder(highlighted);
+	}
+
+	public void removeHighlight() {
+		setBorder(new JButton().getBorder()); // sets the border to default
 	}
 
 }

@@ -1,5 +1,27 @@
 
 public class Constants {
+	/* 
+	 * 
+	 * Properties 
+	 * 
+	 * */
+	
+	public final static int MINIMAX_DEPTH = 10;
+	
+	/* Maximum amount of time (milliseconds) to search for the best move. After then, the best move found so far is used */
+	public final static int MAX_SEARCH_TIME = 2000; 
+	
+	/* Minimum delay between moves (milliseconds) */
+	public final static int MIN_DELAY = 2000; 
+	
+	
+	
+	/* 
+	 * 
+	 * Other constants 
+	 * 
+	 * */
+	
 	public final static int EMPTY_CELL = 0;
 	public final static int WHITE_CELL = 1;
 	public final static int BLACK_CELL = 2;
@@ -24,10 +46,12 @@ public class Constants {
 	public final static int CAPTURE = 1;
 	public final static int JUMP_OVER = 2;
 	public final static int ERROR = -1;
-	public final static int MIN_DELAY = 1000;
+	public final static boolean ACTIVATE_GRID = true;
 	public final static String NONE_SELECTED = "";
 	public final static String PLAYER_1_TURN = "   Player 1's Turn";
 	public final static String PLAYER_2_TURN = "   Player 2's Turn";
 	public final static String REMAINING_PIECES_MSG_1 = "      Player 1 \t\t Remaining pieces: ";
 	public final static String REMAINING_PIECES_MSG_2 = "      Player 2 \t\t Remaining pieces: ";
+	public final static String GAME_OVER_MSG_1 = "   Game over! Player 1 wins!";
+	public final static String GAME_OVER_MSG_2 = "   Game over! Player 2 wins!";
 }

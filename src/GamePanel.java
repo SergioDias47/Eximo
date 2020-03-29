@@ -1,12 +1,8 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
@@ -46,8 +42,11 @@ public class GamePanel extends JPanel {
 		return board;
 	}
 	
-	public void updateMatchInfo(int numPieces1, int numPieces2) {
-		if(playerTurn.getText().equals(Constants.PLAYER_1_TURN)) {
+	public void updateMatchInfo(int numPieces1, int numPieces2, boolean gameOver) {
+		if(gameOver) {
+			playerTurn.setText((numPieces1 > numPieces2)? Constants.GAME_OVER_MSG_1 : Constants.GAME_OVER_MSG_2);
+		}
+		else if(playerTurn.getText().equals(Constants.PLAYER_1_TURN)) {
 			playerTurn.setText(Constants.PLAYER_2_TURN);
 		} else {
 			playerTurn.setText(Constants.PLAYER_1_TURN);
@@ -56,8 +55,8 @@ public class GamePanel extends JPanel {
 		this.numPieces2.setText(Constants.REMAINING_PIECES_MSG_2 + numPieces2);
 	}
 
-	public void setButtonListeners(Controller ctrl) {
-		board.setButtonListeners(ctrl);
+	public void setButtonListeners(Controller ctrl, boolean activateGrid) {
+		if(activateGrid) board.setButtonListeners(ctrl);
 		exitButton.addActionListener(ctrl);
 	}
 }

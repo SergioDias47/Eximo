@@ -35,8 +35,8 @@ public class UI extends JFrame {
 		menuPanel.setButtonListeners(ctrl);
 	}
 	
-	public void setGamePanelListener(Controller ctrl) {
-		gamePanel.setButtonListeners(ctrl);
+	public void setGamePanelListener(Controller ctrl, boolean activateGrid) {
+		gamePanel.setButtonListeners(ctrl, activateGrid);
 	}
 	
 	public void switchPanel(int panel) {
@@ -54,8 +54,8 @@ public class UI extends JFrame {
 		return gamePanel.getBoard();
 	}
 	
-	public void updateMatchInfo(int numPieces1, int numPieces2) {
-		gamePanel.updateMatchInfo(numPieces1, numPieces2);
+	public void updateMatchInfo(int numPieces1, int numPieces2, boolean gameOver) {
+		gamePanel.updateMatchInfo(numPieces1, numPieces2, gameOver);
 	}
 	
 	public void exit() {
@@ -64,5 +64,9 @@ public class UI extends JFrame {
 
 	public void setKeyListener(Controller ctrl) {
 		addKeyListener(ctrl);
+	}
+	
+	public void removeAllHighlights() {
+		getBoard().removeAllHighlights();
 	}
 }

@@ -25,13 +25,16 @@ public class Controller implements ActionListener, KeyListener {
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			String buttonName = ((Component) e.getSource()).getName();
 			
+			/* If the player has extra pieces, the controller must let him choose where to place them */
 			if (game.getPiecesToAdd() > 0) {
 				game.addPieceAt(Utils.getButtonPos(buttonName));
 			}
 			else {
 				if(firstSelected.equals(Constants.NONE_SELECTED)) {
 					firstSelected = buttonName;
+					game.highlightAvailableMoves(Utils.getButtonPos(firstSelected));
 				} else {
+					gui.removeAllHighlights();
 					Position startP = Utils.getButtonPos(firstSelected);
 					Position endP = Utils.getButtonPos(buttonName);
 					new Thread() {
@@ -47,19 +50,20 @@ public class Controller implements ActionListener, KeyListener {
 				case "PP":
 					game = new Eximo(gui, Constants.PLAYER_VS_PLAYER);
 					gui.switchPanel(Constants.GAME_PANEL);
-					gui.setGamePanelListener(this);
+					gui.setGamePanelListener(this, Constants.ACTIVATE_GRID);
 					game.printCurrentBoard();
 					break;
 				case "PB":
 					game = new Eximo(gui, Constants.PLAYER_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
-					gui.setGamePanelListener(this);
+					gui.setGamePanelListener(this, Constants.ACTIVATE_GRID);
+					game.printCurrentBoard();
 					break;
 				case "BB":
 					game = new Eximo(gui, Constants.BOT_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
 					game.printCurrentBoard();
-					gui.setGamePanelListener(this);
+					gui.setGamePanelListener(this, !Constants.ACTIVATE_GRID);
 					break;
 				case "exit":
 					gui.exit();
@@ -71,13 +75,29 @@ public class Controller implements ActionListener, KeyListener {
 		} 
 		gui.requestFocusInWindow();
 	}
+	
+	/*
+	 * Quits a match and goes back to the main menu.
+	 */
+	public void goBackToMenu() {
+		game.stopBotWork();
+		game = null;
+		gui.switchPanel(Constants.MENU_PANEL);
+		firstSelected = Constants.NONE_SELECTED;
+	}
 
+	/*
+	 * 
+	 * Handling keyboard events.
+	 * 
+	 */
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 		if(key == KeyEvent.VK_R) {
 			if(firstSelected != Constants.NONE_SELECTED)
-				removeHighlights();
+				gui.removeAllHighlights();
 			firstSelected = Constants.NONE_SELECTED;
 		}
 		if(key == KeyEvent.VK_ESCAPE) {
@@ -93,25 +113,5 @@ public class Controller implements ActionListener, KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
-	
-	public void highlightMoves() {
-		//gui.getBoard().highlightAt(firstSelection);
-		//possibleMoves = game.generateMoves(game.getBoard(), game.getCurrentPlayer(), firstSelection);
-		//for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos());
-	}
-	
-	public void removeHighlights() {
-		//gui.getBoard().highlightAt(firstSelection);
-		//for(Move move : possibleMoves) gui.getBoard().highlightAt(move.endPos.toBoardPos()); 
-	}
-	
-	public void goBackToMenu() {
-		game.stopBotWork();
-		game = null;
-		gui.switchPanel(Constants.MENU_PANEL);
-		firstSelected = Constants.NONE_SELECTED;
-	}
-	
-	
 
 }
