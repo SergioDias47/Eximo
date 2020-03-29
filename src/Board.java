@@ -88,7 +88,7 @@ public class Board {
 		int evaluation = 0;
 		for (int i = 0; i < Constants.LINE_LENGTH; i++) 
 			for (int j = 0; j < Constants.LINE_LENGTH; j++) {
-				if(cells[i][j] == player) {
+				if(cells[j][i] == player) {
 					evaluation += (player == 1)? i : (7 - i);
 				}
 			}
@@ -101,7 +101,7 @@ public class Board {
 			for (int j = 0; j < Constants.LINE_LENGTH; j++) {
 				if(cells[i][j] == player) {
 					count++;
-				}
+				} 
 			}
 		return count;
 	}

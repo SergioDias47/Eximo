@@ -35,6 +35,10 @@ public class Eximo {
 				  botMove();
 		}}.start();
 	}
+	
+	public void stopBotWork() {
+		stopWorking = true;
+	}
 
     public int getPlayer() {
         return player;
@@ -51,11 +55,14 @@ public class Eximo {
     
     public void playerMove(Position startPos, Position endPos) {
     	
+    	
+    	
     	boolean isValid = false;
     	List<List<Board>> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllBoards(board, player);
     	List<List<Board>> newForcedStates = new ArrayList<List<Board>>();
     	Board nextBoard = emulateMove(new Move(startPos, endPos, board, player));
     	for(List<Board> move : allMoves) {
+    		move.get(move.size() - 1).print();
     		if(move.get(0).equals(nextBoard)) {
     			board = nextBoard;
     			isValid = true;
@@ -78,31 +85,6 @@ public class Eximo {
         		nextPlayer();
         	}
     	}
-    	
-    	
-    		
-    	
-    	/*startPos = new Position(2,1);
-    	endPos = new Position(3,0);
-    	
-    	startPos.print(); endPos.print();
-        boolean isValid = false;
-        System.out.println("Antes do while");
-        do {
-            Board boardTemp = emulateMove(new Move(startPos, endPos, board, player));
-            boardTemp.print();
-            for (Board b : generateBoards(board, player, startPos)) {
-                if (boardTemp.equals(b)) {
-                	System.out.println("Move accepted");
-                    isValid = true;
-                    board = b;
-                    break;
-                }
-            }
-        } while(!isValid);
-        System.out.println("Depois do while");
-        //board.print();
-        printCurrentBoard();*/
     }
 
 
@@ -154,9 +136,10 @@ public class Eximo {
 		List<List<Board>> allMoves = generateAllBoards(board, player);
 		int bestScore = Integer.MIN_VALUE;
 		List<Board> bestMove = new ArrayList<Board>(); 
+		
 		for(List<Board> move : allMoves) {
 			Board finalBoard = move.get(move.size() - 1);
-			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
+			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, 4);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestMove = move;
@@ -167,7 +150,6 @@ public class Eximo {
 
 	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
 		if(stopWorking) return 0;
-		int currentScore = evaluateMove(board); 
 		int bestScore;
 		int player;
 		if (isMaximizing) {
@@ -186,6 +168,7 @@ public class Eximo {
 		
 		
 		if(depth == 1) {
+			int currentScore = evaluateMove(board); 
 			return currentScore;
 		}
 		
@@ -227,13 +210,13 @@ public class Eximo {
         }
 
         for (Board b : boards) {
-            createBoardsListsAux(new ArrayList<Board>(), b);
+            createBoardsLists(new ArrayList<Board>(), b);
         }
         List<List<Board>> boardsLists = new ArrayList<List<Board>>(boardsList);
         return boardsLists;
     }
 
-    public void createBoardsListsAux(List<Board> boards, Board board) {
+    public void createBoardsLists(List<Board> boards, Board board) {
         boards.add(board);
         List<Board> nextBoards = board.getNextBoards();
         if (nextBoards.size() == 0) {
@@ -242,7 +225,7 @@ public class Eximo {
         }
         for (Board b : nextBoards) {
             List<Board> boardsTemp = new ArrayList<Board>(boards);
-            createBoardsListsAux(boardsTemp, b);
+            createBoardsLists(boardsTemp, b);
         }
     }
 

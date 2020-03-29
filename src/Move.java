@@ -26,7 +26,8 @@ public class Move {
     }
 
     public boolean isJumpOver() {
-        return captured.x == -1 && (Math.abs(endPos.y - startPos.y) == 2 || Math.abs(endPos.x - startPos.x) == 2);
+        return captured.x == Constants.ERROR && (Math.abs(endPos.y - startPos.y) == 2 || Math.abs(endPos.x - startPos.x) == 2)
+        		&& board.getCell(new Position(Math.abs(endPos.x + startPos.x)/2, Math.abs(endPos.y + startPos.y)/2)) == player;
     }
 
     public boolean checkBoundaries() {

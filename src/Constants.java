@@ -24,7 +24,7 @@ public class Constants {
 	public final static int CAPTURE = 1;
 	public final static int JUMP_OVER = 2;
 	public final static int ERROR = -1;
-	public final static int MIN_DELAY = 200;
+	public final static int MIN_DELAY = 0;
 	public final static String NONE_SELECTED = "";
 	public final static String PLAYER_1_TURN = "   Player 1's Turn";
 	public final static String PLAYER_2_TURN = "   Player 2's Turn";

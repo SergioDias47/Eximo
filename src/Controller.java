@@ -54,7 +54,7 @@ public class Controller implements ActionListener, KeyListener {
 					game = new Eximo(gui, Constants.BOT_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
 					game.printCurrentBoard();
-					//gui.setGamePanelListener(this);
+					gui.setGamePanelListener(this);
 					break;
 				case "exit":
 					gui.exit();
@@ -101,6 +101,7 @@ public class Controller implements ActionListener, KeyListener {
 	}
 	
 	public void goBackToMenu() {
+		game.stopBotWork();
 		game = null;
 		gui.switchPanel(Constants.MENU_PANEL);
 		firstSelected = Constants.NONE_SELECTED;
