@@ -11,15 +11,15 @@ public class Utils {
 		return sign;
 	}
 	
-	public static boolean isWithinSafeZone(int player, int position) {
-        if(player == 1)
+	public static boolean isWithinDropZone(Position position, int player) {
+        if(player == Constants.PLAYER_1)
             for(int i = 1; i <= 6; i++) {
-                if(position == i || position == i+8)
+                if(position.x == i && (position.y == 0 || position.y == 1))
                     return true;
             }
         else {
         	for(int i = 1; i <= 6; i++) {
-	            if(position == i+48 || position == i+56)
+	            if(position.x == i && (position.y == 6 || position.y == 7))
 	                return true;
             }
         }

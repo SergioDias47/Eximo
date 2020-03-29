@@ -13,7 +13,6 @@ public class Board {
         pieceReachedEnd = false;
         nextBoards = new ArrayList<Board>();
         parent = null;
-        print();
     }
 
     public Board(Board board) {
@@ -23,7 +22,7 @@ public class Board {
 		cells = new int[Constants.LINE_LENGTH][Constants.LINE_LENGTH];
 		for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                cells[i][j] = board.cells[i][j];
+                cells[j][i] = board.cells[j][i];
             }
         }
     }
@@ -122,5 +121,17 @@ public class Board {
             }
         }
         return true;
+    }
+    
+    public List<Position> getDropZoneCells(int player) {
+    	List<Position> dropZoneCells = new ArrayList<Position>();
+    	for (int i = 0; i < 8; i++) {
+    		for (int j = 0; j < 8; j++) {
+    			Position pos = new Position(j, i);
+    			if (cells[j][i] == Constants.EMPTY_CELL && Utils.isWithinDropZone(pos, player))
+    				dropZoneCells.add(pos);
+    		}
+    	}
+    	return dropZoneCells;
     }
 }

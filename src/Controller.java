@@ -25,16 +25,21 @@ public class Controller implements ActionListener, KeyListener {
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			String buttonName = ((Component) e.getSource()).getName();
 			
-			if(firstSelected.equals(Constants.NONE_SELECTED)) {
-				firstSelected = buttonName;
-			} else {
-				Position startP = Utils.getButtonPos(firstSelected);
-				Position endP = Utils.getButtonPos(buttonName);
-				new Thread() {
-					  public void run() {
-						  game.playerMove(startP, endP);
-				}}.start();
-				firstSelected = Constants.NONE_SELECTED;
+			if (game.getPiecesToAdd() > 0) {
+				game.addPieceAt(Utils.getButtonPos(buttonName));
+			}
+			else {
+				if(firstSelected.equals(Constants.NONE_SELECTED)) {
+					firstSelected = buttonName;
+				} else {
+					Position startP = Utils.getButtonPos(firstSelected);
+					Position endP = Utils.getButtonPos(buttonName);
+					new Thread() {
+						  public void run() {
+							  game.playerMove(startP, endP);
+					}}.start();
+					firstSelected = Constants.NONE_SELECTED;
+				}
 			}
 		} else {
 			String buttonName = ((Component) e.getSource()).getName();

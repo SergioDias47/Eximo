@@ -11,4 +11,17 @@ public class Position {
     	System.out.println("(" + x + ", " + y + ")");
     }
     
+    @Override
+    public boolean equals(Object o) {
+    	if (o == this) { 
+            return true; 
+        }    
+        if (!(o instanceof Position)) { 
+            return false; 
+        }     
+        Position p = (Position) o;
+        return (x == p.x && y == p.y);
+    }
+    
+    
 }

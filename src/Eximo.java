@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,20 +13,20 @@ public class Eximo {
 	/* Game state */
     private int player;
     private Board board;
-    private List<List<Board>> boardsList;
-    
-    private List<List<Board>> forcedStates;
+    private int piecesToAdd;
+    private List<MoveSequence> forcedStates;
 
     /* Constructor */
     public Eximo(UI gui, int gameMode) {
         player = Constants.PLAYER_1;
         board = new Board();
-        forcedStates = new ArrayList<List<Board>>();
+        forcedStates = new ArrayList<MoveSequence>();
         this.gameMode = gameMode;
         this.gui = gui;
         if(gameMode == Constants.BOT_VS_BOT) {
 			startBotWork();
 		}
+        piecesToAdd = 0;
 	}
 	
 	private void startBotWork() {
@@ -56,21 +57,19 @@ public class Eximo {
     public void playerMove(Position startPos, Position endPos) {
     	
     	
-    	
     	boolean isValid = false;
-    	List<List<Board>> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllBoards(board, player);
-    	List<List<Board>> newForcedStates = new ArrayList<List<Board>>();
+    	List<MoveSequence> allMoves = (forcedStates.size() > 0)? forcedStates : generateAllBoards(board, player);
+    	List<MoveSequence> newForcedStates = new ArrayList<MoveSequence>();
     	Board nextBoard = emulateMove(new Move(startPos, endPos, board, player));
-    	for(List<Board> move : allMoves) {
-    		move.get(move.size() - 1).print();
-    		if(move.get(0).equals(nextBoard)) {
+    	for(MoveSequence move : allMoves) {
+    		if(move.getFirstBoard().equals(nextBoard)) {
+    			//move.print();
     			board = nextBoard;
     			isValid = true;
     			move.remove(0);
     			if(move.size() > 0) {
     				newForcedStates.add(move);
     			}
-    				
     		}
     	}
     	
@@ -80,11 +79,32 @@ public class Eximo {
     		board = nextBoard;
     		printCurrentBoard();
     		forcedStates = newForcedStates;
+    		if (board.pieceReachedEnd) {
+    			board.pieceReachedEnd = false;
+    			int noCells = board.getDropZoneCells(player).size();
+    			piecesToAdd = (noCells > 2 ? 2 : noCells);
+    		}
     		
     		if(forcedStates.size() == 0) {
         		nextPlayer();
         	}
     	}
+    }
+    
+    public void addPieceAt(Position pos) {
+    	System.out.println("Chegou aqui com pos: "); pos.print();
+    	if (Utils.isWithinDropZone(pos, player)) {
+    		board.setCell(pos, player);
+    		printCurrentBoard();
+    		if (--piecesToAdd == 0) {
+    			nextPlayer();
+    			forcedStates.clear();
+    		}
+    	}
+    }
+    
+    public int getPiecesToAdd() {
+    	return piecesToAdd;
     }
 
 
@@ -92,7 +112,7 @@ public class Eximo {
 	public void botMove() {
 		
 		long startTime = System.currentTimeMillis();
-		List<Board> chosenMove = findBestBoard();
+		MoveSequence chosenMove = findBestBoard();
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Elapsed time: " + elapsedTime);
 		int delay = Integer.max((int) (Constants.MIN_DELAY - elapsedTime), 0);
@@ -101,7 +121,7 @@ public class Eximo {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		board = chosenMove.get(chosenMove.size()-1);
+		board = chosenMove.getLastBoard();
 		printCurrentBoard();
 		nextPlayer();
 		if(gameOver()) return;
@@ -111,7 +131,7 @@ public class Eximo {
 		}
 	}
 	
-	private int evaluateMove(Board resultingBoard) {
+	public static int heuristic(Board resultingBoard, int player) {
 		return resultingBoard.evaluatePositioning(player) + resultingBoard.countPieces(player)*15; 
 	}
 	
@@ -132,14 +152,17 @@ public class Eximo {
 		return false;
 	}
 	
-	private List<Board> findBestBoard() {
-		List<List<Board>> allMoves = generateAllBoards(board, player);
-		int bestScore = Integer.MIN_VALUE;
-		List<Board> bestMove = new ArrayList<Board>(); 
+	private MoveSequence findBestBoard() {
+		List<MoveSequence> allMoves = generateAllBoards(board, player);
 		
-		for(List<Board> move : allMoves) {
-			Board finalBoard = move.get(move.size() - 1);
-			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, 4);
+		Collections.sort(allMoves);
+		
+		int bestScore = Integer.MIN_VALUE;
+		MoveSequence bestMove = new MoveSequence(); 
+		
+		for(MoveSequence move : allMoves) {
+			Board finalBoard = move.getLastBoard();
+			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, 3);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestMove = move;
@@ -168,15 +191,19 @@ public class Eximo {
 		
 		
 		if(depth == 1) {
-			int currentScore = evaluateMove(board); 
+			int currentScore = heuristic(board, this.player); 
 			return currentScore;
 		}
 		
-		List<List<Board>> allMoves = generateAllBoards(board, player);
+		List<MoveSequence> allMoves = generateAllBoards(board, player);
 		
+		Collections.sort(allMoves);
 		
-		for(List<Board> move : allMoves) {
-			Board finalBoard = move.get(move.size() - 1);
+		if(!isMaximizing)
+			Collections.reverse(allMoves);
+		
+		for(MoveSequence move : allMoves) {
+			Board finalBoard = move.getLastBoard();
 			int newScore = minimax(finalBoard, !isMaximizing, alpha, beta, depth - 1);
 			if (isMaximizing) {
 				bestScore = Integer.max(bestScore, newScore);
@@ -197,8 +224,7 @@ public class Eximo {
     
     
     
-    public List<List<Board>> generateAllBoards(Board board, int player) {
-        boardsList = new ArrayList<List<Board>>();
+    public List<MoveSequence> generateAllBoards(Board board, int player) {
         List<Board> boards = new ArrayList<Board>();
         
         /* For each cell of the board, we generate the board sequences from there */
@@ -209,23 +235,23 @@ public class Eximo {
             }
         }
 
+        List<MoveSequence> moveSeqList = new ArrayList<MoveSequence>();
         for (Board b : boards) {
-            createBoardsLists(new ArrayList<Board>(), b);
+            createBoardsLists(new MoveSequence(player), b, moveSeqList);
         }
-        List<List<Board>> boardsLists = new ArrayList<List<Board>>(boardsList);
-        return boardsLists;
+        return moveSeqList;
     }
 
-    public void createBoardsLists(List<Board> boards, Board board) {
-        boards.add(board);
+    public void createBoardsLists(MoveSequence moveSeq, Board board, List<MoveSequence> moveSeqList) {
+    	moveSeq.add(board);
         List<Board> nextBoards = board.getNextBoards();
         if (nextBoards.size() == 0) {
-            this.boardsList.add(boards);
+            moveSeqList.add(moveSeq);
             return;
         }
         for (Board b : nextBoards) {
-            List<Board> boardsTemp = new ArrayList<Board>(boards);
-            createBoardsLists(boardsTemp, b);
+        	MoveSequence moveSeqTemp = new MoveSequence(moveSeq);
+            createBoardsLists(moveSeqTemp, b, moveSeqList);
         }
     }
 
@@ -296,6 +322,7 @@ public class Eximo {
 		Move move = new Move(startPos, endPos, board, player);
 		if(move.checkBoundaries() && board.getCell(endPos) == Constants.EMPTY_CELL) {
             Board boardRes = emulateMove(move);
+            generateNextBoards(boardRes, move);
             return boardRes;
 		}
 		return null;
@@ -340,22 +367,47 @@ public class Eximo {
     }
     
     public void generateNextBoards(Board boardRes, Move move) {
+    	if (reachedEndOfBoard(boardRes, move.player)) return;
         List<Board> nextBoards = new ArrayList<Board>();
         if (move.isCapture()) 
             nextBoards = generateCaptureBoards(boardRes, move.player, move.endPos);
-        else nextBoards = generateJumpOverBoards(boardRes, move.player, move.endPos);
+        else if (move.isJumpOver()) 
+        	nextBoards = generateJumpOverBoards(boardRes, move.player, move.endPos);
         for (Board b : nextBoards) {
             boardRes.addNextBoard(b);
             b.setParent(boardRes);
         }
     }
 
-    public Board reachedEndofBoard(Move move) {
-        Board boardRes = emulateMove(move);
-        if (boardRes.pieceReachedEnd) {
-
+    public boolean reachedEndOfBoard(Board board, int player) {
+        if (board.pieceReachedEnd) {
+        	List<Position> dropZoneCells = board.getDropZoneCells(player);
+        	switch(dropZoneCells.size()) {
+	        	case 0:
+	        		break;
+	        	case 1:
+	        		for (Position pos : dropZoneCells) {
+	        			Board temp = new Board(board);
+	        			temp.setCell(pos, player);
+	        			board.addNextBoard(temp);
+	        		}
+	        		break;
+	        	default:
+	        		for (Position pos1 : dropZoneCells) {
+	        			for (Position pos2 : dropZoneCells) {
+	        				if (!pos1.equals(pos2)) {
+	        					Board temp = new Board(board);
+	        					temp.setCell(pos1, player);
+	        					temp.setCell(pos2, player);
+	        					board.addNextBoard(temp);
+	        				}
+	        			}
+	        		}
+	        		break;
+        	}
+        	return true;
         }
-        return boardRes;
+        return false;
     }
     
     public Board emulateMove(Move move) {
@@ -365,8 +417,10 @@ public class Eximo {
         if (move.isCapture()) {
             boardRes.setCell(move.captured, Constants.EMPTY_CELL);
         }
-        if ((move.endPos.y == 7 && move.player == Constants.PLAYER_2) || (move.startPos.y == 0 && move.player == Constants.PLAYER_1))
-            boardRes.pieceReachedEnd = true;
+        if ((move.endPos.y == 7 && move.player == Constants.PLAYER_1) || (move.endPos.y == 0 && move.player == Constants.PLAYER_2)) {
+        	boardRes.pieceReachedEnd = true;
+        	boardRes.setCell(move.endPos, Constants.EMPTY_CELL);
+        }
         return boardRes;
     }
 }
