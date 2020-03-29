@@ -6,13 +6,13 @@ public class Constants {
 	 * 
 	 * */
 	
-	public final static int MINIMAX_DEPTH = 10;
+	public final static int MINIMAX_DEPTH = 3;
 	
 	/* Maximum amount of time (milliseconds) to search for the best move. After then, the best move found so far is used */
 	public final static int MAX_SEARCH_TIME = 2000; 
 	
 	/* Minimum delay between moves (milliseconds) */
-	public final static int MIN_DELAY = 2000; 
+	public final static int MIN_DELAY = 1000; 
 	
 	
 	

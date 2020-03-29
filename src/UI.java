@@ -18,14 +18,14 @@ public class UI extends JFrame {
 		setResizable(false);
 		setTitle("Eximo");
 		
-		// Set layout manager
+		/* Setting layout manager */
 		layout = new CardLayout();
 		setLayout(layout);
 		
 		gamePanel = new GamePanel();
 		menuPanel = new MenuPanel();
 		
-		// Add Swing components to content pane
+		/* Adding Swing components to content pane */
 		Container c = getContentPane();
 		c.add(menuPanel);
 		c.add(gamePanel);

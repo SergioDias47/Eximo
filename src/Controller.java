@@ -23,6 +23,10 @@ public class Controller implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
+			/* If the bot is thinking, human players should not disturb it */
+			if(game.getGameMode() == Constants.PLAYER_VS_BOT && game.getPlayer() == Constants.PLAYER_2)
+				return;
+			
 			String buttonName = ((Component) e.getSource()).getName();
 			
 			/* If the player has extra pieces, the controller must let him choose where to place them */
@@ -62,8 +66,8 @@ public class Controller implements ActionListener, KeyListener {
 				case "BB":
 					game = new Eximo(gui, Constants.BOT_VS_BOT);
 					gui.switchPanel(Constants.GAME_PANEL);
-					game.printCurrentBoard();
 					gui.setGamePanelListener(this, !Constants.ACTIVATE_GRID);
+					game.printCurrentBoard();
 					break;
 				case "exit":
 					gui.exit();

@@ -27,8 +27,8 @@ public class MoveSequence implements Comparable<MoveSequence> {
 		Board finalBoard1 = boards.get(boards.size() - 1);
 		Board finalBoard2 = o.boards.get(o.boards.size() - 1);
 		
-		int eval1 = Eximo.heuristic(finalBoard1, player);
-		int eval2 = Eximo.heuristic(finalBoard2, player);
+		int eval1 = Heuristics.evaluateState(finalBoard1, player);
+		int eval2 = Heuristics.evaluateState(finalBoard2, player);
 		
 		if (eval1 > eval2) return -1;
 		if (eval1 < eval2) return 1;
