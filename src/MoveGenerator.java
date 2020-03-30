@@ -36,7 +36,6 @@ public class MoveGenerator {
         }
         if ((move.endPos.y == 7 && move.player == Constants.PLAYER_1) || (move.endPos.y == 0 && move.player == Constants.PLAYER_2)) {
         	boardRes.pieceReachedEnd = true;
-        	boardRes.setCell(move.endPos, Constants.EMPTY_CELL);
         }
         return boardRes;
     }
@@ -187,7 +186,7 @@ public class MoveGenerator {
 	 * Generates the subsequent boards that result from a mandatory move.
 	 */
     private static void generateNextBoards(Board boardRes, Move move) {
-    	if (reachedEndOfBoard(boardRes, move.player)) return;
+    	if (reachedEndOfBoard(boardRes, move)) return;
         List<Board> nextBoards = new ArrayList<Board>();
         if (move.isCapture()) 
             nextBoards = generateCaptureBoards(boardRes, move.player, move.endPos);
@@ -202,16 +201,20 @@ public class MoveGenerator {
     /*
      * Checks and handles the event that occurs when a player has a piece reach the end of the board.
      */
-    private static boolean reachedEndOfBoard(Board board, int player) {
+    private static boolean reachedEndOfBoard(Board board, Move move) {
         if (board.pieceReachedEnd) {
-        	List<Position> dropZoneCells = board.getDropZoneCells(player);
+        	board.pieceReachedEnd = false;
+        	Board boardTemp = new Board(board);
+        	boardTemp.setCell(move.endPos, Constants.EMPTY_CELL);
+        	List<Position> dropZoneCells = board.getDropZoneCells(move.player);
         	switch(dropZoneCells.size()) {
 	        	case 0:
+	        		board.addNextBoard(boardTemp);
 	        		break;
 	        	case 1:
 	        		for (Position pos : dropZoneCells) {
-	        			Board temp = new Board(board);
-	        			temp.setCell(pos, player);
+	        			Board temp = new Board(boardTemp);
+	        			temp.setCell(pos, move.player);
 	        			board.addNextBoard(temp);
 	        		}
 	        		break;
@@ -219,9 +222,9 @@ public class MoveGenerator {
 	        		for (Position pos1 : dropZoneCells) {
 	        			for (Position pos2 : dropZoneCells) {
 	        				if (!pos1.equals(pos2)) {
-	        					Board temp = new Board(board);
-	        					temp.setCell(pos1, player);
-	        					temp.setCell(pos2, player);
+	        					Board temp = new Board(boardTemp);
+	        					temp.setCell(pos1, move.player);
+	        					temp.setCell(pos2, move.player);
 	        					board.addNextBoard(temp);
 	        				}
 	        			}

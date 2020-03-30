@@ -182,4 +182,16 @@ public class Board {
     	}
 		return positions;
 	}
+	
+	/**
+     * Removes the pieces that are placed at the end of the board and belong to the specified player.
+     */
+    public void removeEndPieces(int player) {
+    	for (int i = 0; i < Constants.LINE_LENGTH; ++i) {
+    		if (player == Constants.PLAYER_1 && cells[i][7] == Constants.PLAYER_1)
+    			cells[i][7] = Constants.EMPTY_CELL;
+    		else if (player == Constants.PLAYER_2 && cells[i][0] == Constants.PLAYER_2)
+    			cells[i][0] = Constants.EMPTY_CELL;
+    	}
+    }
 }

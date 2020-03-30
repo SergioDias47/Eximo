@@ -110,9 +110,15 @@ public class Eximo {
     		forcedStates = newForcedStates;
     		if (board.pieceReachedEnd) {
     			board.pieceReachedEnd = false;
+    			highlightDropZone();
     			int noCells = board.getDropZoneCells(player).size();
-    			piecesToAdd = (noCells > 2 ? 2 : noCells);
+    			piecesToAdd = noCells > 2 ? 2 : noCells;
+    			if (piecesToAdd == 0) {
+    				forcedStates.clear();
+    				board.removeEndPieces(player);
+    			}
     		}
+    	
     		
     		if(forcedStates.size() == 0) {
         		nextPlayer();
@@ -122,13 +128,15 @@ public class Eximo {
     }
     
     public void addPieceAt(Position pos) {
-    	System.out.println("Extra piece added at "); pos.print();
     	if (Utils.isWithinDropZone(pos, player)) {
     		board.setCell(pos, player);
     		printCurrentBoard();
     		if (--piecesToAdd == 0) {
-    			nextPlayer();
     			forcedStates.clear();
+    			board.removeEndPieces(player);
+    			nextPlayer();
+    			printCurrentBoard();
+    			if(gameMode == Constants.PLAYER_VS_BOT) botMove();
     		}
     	}
     }
@@ -192,7 +200,7 @@ public class Eximo {
 		List<MoveSequence> allMoves = generateAllSequences(board, player);
 		Collections.sort(allMoves); // sorting nodes for better performance
 		int bestScore = Integer.MIN_VALUE;
-		MoveSequence bestMove = new MoveSequence(); 
+		MoveSequence bestMove = allMoves.get(0); // if time is up before finding any solution, this one is returned
 		
 		for(MoveSequence move : allMoves) {
 			Board finalBoard = move.getLastBoard();
@@ -226,10 +234,13 @@ public class Eximo {
 			bestScore = Integer.MAX_VALUE;
 		}
 		
+		
+		
 		if(depth == 1) { // we've gone into the desired depth, so it's time to rate the solutions
 			int currentScore = Heuristics.evaluateState(board, this.player); 
 			return currentScore;
 		}
+		
 		List<MoveSequence> allMoves = generateAllSequences(board, player);
 		Collections.sort(allMoves);
 		
@@ -237,7 +248,7 @@ public class Eximo {
 			Collections.reverse(allMoves);
 		
 		for(MoveSequence move : allMoves) {
-			if(System.currentTimeMillis() - startTime > Constants.MAX_SEARCH_TIME) { 
+			if(System.currentTimeMillis() - startTime > Integer.max(Constants.MAX_SEARCH_TIME, Constants.MINIMAX_DEPTH*20)) { 
 				break; // time is up
 			}
 			Board finalBoard = move.getLastBoard();
@@ -280,4 +291,16 @@ public class Eximo {
     		}
     	}
     }
+    
+    /*
+     * Requests the UI to highlight the free spots that located at the drop zone.
+     */
+    public void highlightDropZone() {
+    	List<Position> positions = board.getDropZoneCells(player);
+    	for(Position pos : positions) {
+    		gui.getBoard().highlightAt(pos);
+    	}
+    }
+    
+    
 }

@@ -9,10 +9,14 @@ public class Constants {
 	public final static int MINIMAX_DEPTH = 3;
 	
 	/* Maximum amount of time (milliseconds) to search for the best move. After then, the best move found so far is used */
-	public final static int MAX_SEARCH_TIME = 2000; 
+	public final static int MAX_SEARCH_TIME = 1500; 
 	
 	/* Minimum delay between moves (milliseconds) */
-	public final static int MIN_DELAY = 1000; 
+	public final static int MIN_DELAY = 0; 
+	
+	/* Heuristic used for each player */
+	public final static int HEURISTIC_PLAYER_1 = 2;
+	public final static int HEURISTIC_PLAYER_2 = 0;
 	
 	/* 
 	 * 
