@@ -6,6 +6,8 @@ import javax.swing.JButton;
 import javax.swing.border.Border;
 
 public class BoardButton extends JButton{
+	private static final long serialVersionUID = 1L;
+	
 	private ImageIcon white, black, empty; 
 	private final Border highlighted = BorderFactory.createLineBorder(Color.yellow, 2);
 	private final String whiteImgPath = "Pictures\\whitePiece2.jpg";
@@ -28,6 +30,9 @@ public class BoardButton extends JButton{
 		setIcon(type);
 	}
 
+	/*
+	 * Changes the icon to match the specified type.
+	 */
 	public void setIcon(int type) {
 		if(type == Constants.WHITE_CELL)
 			setIcon(white);
@@ -36,10 +41,16 @@ public class BoardButton extends JButton{
 		else setIcon(empty);
 	}
 	
+	/*
+	 * Highlights the button, adding a border around it.
+	 */
 	public void highlight() {
 		setBorder(highlighted);
 	}
 
+	/*
+	 * Removes any previously added highlight.
+	 */
 	public void removeHighlight() {
 		setBorder(new JButton().getBorder()); // sets the border to default
 	}

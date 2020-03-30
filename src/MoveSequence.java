@@ -35,26 +35,44 @@ public class MoveSequence implements Comparable<MoveSequence> {
 		return 0;
 	}
 
+	/*
+	 * Returns the boards corresponding the move sequence.
+	 */
 	public List<Board> getBoards() {
 		return boards;
 	}
-	
+	 
+	/*
+	 * Adds a board to the move sequence. 
+	 */
 	public void add(Board board) {
 		boards.add(board);
 	}
 	
+	/*
+	 * Returns the first board of the sequence.
+	 */
 	public Board getFirstBoard() {
 		return boards.get(0);
 	}
 	
+	/*
+	 * Returns the last board of the sequence.
+	 */
 	public Board getLastBoard() {
 		return boards.get(boards.size() - 1);
 	}
 	
+	/*
+	 * Removes the element at the specified index from the move sequence.
+	 */
 	public void remove(int index) {
 		boards.remove(index);
 	}
 	
+	/*
+	 * Returns the size of the move sequence.
+	 */
 	public int size() {
 		return boards.size();
 	}
@@ -62,7 +80,6 @@ public class MoveSequence implements Comparable<MoveSequence> {
 	public void print() {
 		System.out.println("Move Sequence: ");
 		for (Board b : boards) {
-			//System.out.println("Board end: " + b.pieceReachedEnd);
 			b.print();
 		}
 	}

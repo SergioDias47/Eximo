@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MoveGenerator {
+	
 	/*
      * Generates all the possible sequence of boards for a given game state. 
      */
@@ -18,7 +19,7 @@ public class MoveGenerator {
 
         List<MoveSequence> moveSeqList = new ArrayList<MoveSequence>();
         for (Board b : boards) {
-            createBoardsLists(new MoveSequence(player), b, moveSeqList);
+        	generateSequences(new MoveSequence(player), b, moveSeqList);
         }
         return moveSeqList;
     }
@@ -40,7 +41,10 @@ public class MoveGenerator {
         return boardRes;
     }
 
-    private static void createBoardsLists(MoveSequence moveSeq, Board board, List<MoveSequence> moveSeqList) {
+    /*
+     * Generates all the possible the move sequences that starts with the given board.
+     */
+    private static void generateSequences(MoveSequence moveSeq, Board board, List<MoveSequence> moveSeqList) {
     	moveSeq.add(board);
         List<Board> nextBoards = board.getNextBoards();
         if (nextBoards.size() == 0) {
@@ -49,7 +53,7 @@ public class MoveGenerator {
         }
         for (Board b : nextBoards) {
         	MoveSequence moveSeqTemp = new MoveSequence(moveSeq);
-            createBoardsLists(moveSeqTemp, b, moveSeqList);
+        	generateSequences(moveSeqTemp, b, moveSeqList);
         }
     }
 
@@ -86,7 +90,6 @@ public class MoveGenerator {
                 captureMoves.addAll(generateCaptureBoards(board, player, pos));
             }
 		} 
-		
 		return captureMoves;
 	}
 	
@@ -197,7 +200,7 @@ public class MoveGenerator {
     }
 
     /*
-     * Handles the event that occurs when a player has a piece reach the end of the board.
+     * Checks and handles the event that occurs when a player has a piece reach the end of the board.
      */
     private static boolean reachedEndOfBoard(Board board, int player) {
         if (board.pieceReachedEnd) {

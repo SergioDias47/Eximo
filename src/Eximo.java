@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 public class Eximo {
 	
@@ -85,7 +84,7 @@ public class Eximo {
     }
     
     /* 
-     * Handles a move input by a human 
+     * Handles a move input by a human player.
      */
     public void playerMove(Position startPos, Position endPos) {
     	boolean isValid = false;

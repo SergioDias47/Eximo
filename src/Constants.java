@@ -14,8 +14,6 @@ public class Constants {
 	/* Minimum delay between moves (milliseconds) */
 	public final static int MIN_DELAY = 1000; 
 	
-	
-	
 	/* 
 	 * 
 	 * Other constants 

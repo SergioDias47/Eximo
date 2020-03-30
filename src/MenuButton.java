@@ -1,14 +1,11 @@
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
-
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 
 public class MenuButton extends JButton {
+	private static final long serialVersionUID = 1L;
+	
 	final Color brownColor = new Color(156, 90, 3);
 	final Color beigeColor = new Color(255, 255, 227);
 	

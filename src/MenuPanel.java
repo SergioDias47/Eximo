@@ -9,10 +9,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
-import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 
 public class MenuPanel extends JMenuBar {
+	private static final long serialVersionUID = 1L;
+	
 	private MenuButton startPPGameButton; // start a player vs player match
 	private MenuButton startPBGameButton; // start a player vs bot match
 	private MenuButton startBBGameButton; // start a bot vs bot match
@@ -30,7 +31,6 @@ public class MenuPanel extends JMenuBar {
 		super();
 		
 		// Setting layout manager
-		
 		GridLayout layout = new GridLayout(9,3);
 		setLayout(layout);
 		this.setBackground(new Color(0,0,0));
@@ -60,8 +60,7 @@ public class MenuPanel extends JMenuBar {
 		exitButton.setText("EXIT GAME");
 		exitButton.setName("exit");
 		
-		// Add components to content pane
-	
+		// Adding components to content pane
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		add(Box.createRigidArea(new Dimension(10, 10)));
@@ -99,6 +98,9 @@ public class MenuPanel extends JMenuBar {
 		add(Box.createRigidArea(new Dimension(10, 10)));
 	}
 	
+	/*
+	 * Sets the listeners for the buttons that belong to this panel, so actions may be handled in the specified controller.
+	 */
 	public void setButtonListeners(Controller ctrl) {
 		startPPGameButton.addActionListener(ctrl);
 		startPBGameButton.addActionListener(ctrl);

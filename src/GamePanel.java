@@ -6,6 +6,8 @@ import javax.swing.Box;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	private BoardPanel board;
 	private GameLabel playerTurn;
 	private GameLabel numPieces1; // remaining pieces of player 1
@@ -38,10 +40,16 @@ public class GamePanel extends JPanel {
 		add(exitButton, BorderLayout.SOUTH);
 	}	
 	
+	/*
+	 * Returns the BoardPanel object.
+	 */
 	public BoardPanel getBoard() {
 		return board;
 	}
 	
+	/*
+	 * Updates the match information on the screen: player turn, number of pieces or eventually displays a game over message.
+	 */
 	public void updateMatchInfo(int numPieces1, int numPieces2, boolean gameOver) {
 		if(gameOver) {
 			playerTurn.setText((numPieces1 > numPieces2)? Constants.GAME_OVER_MSG_1 : Constants.GAME_OVER_MSG_2);
@@ -54,7 +62,11 @@ public class GamePanel extends JPanel {
 		this.numPieces1.setText(Constants.REMAINING_PIECES_MSG_1 + numPieces1);
 		this.numPieces2.setText(Constants.REMAINING_PIECES_MSG_2 + numPieces2);
 	}
-
+	
+	/*
+	 * Requests the BoardPanel object to set up listeners for their buttons.
+	 * Adds a listener for the exit button, so that upon clicking it the controller can handle the event.
+	 */
 	public void setButtonListeners(Controller ctrl, boolean activateGrid) {
 		if(activateGrid) board.setButtonListeners(ctrl);
 		exitButton.addActionListener(ctrl);

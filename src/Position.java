@@ -7,6 +7,9 @@ public class Position {
         this.y = y;
     }
     
+    /*
+     * Prints the coordinates of the position on the console.
+     */
     public void print() {
     	System.out.println("(" + x + ", " + y + ")");
     }

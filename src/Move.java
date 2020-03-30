@@ -21,15 +21,24 @@ public class Move {
 	        } else captured = new Position(-1, -1);
     }
 
+    /*
+     * Checks if a move is a Capture move.
+     */
     public boolean isCapture() {
         return captured.x != -1;
     }
 
+    /*
+     * Checks if a move is a Jump Over move.
+     */
     public boolean isJumpOver() {
         return captured.x == Constants.ERROR && (Math.abs(endPos.y - startPos.y) == 2 || Math.abs(endPos.x - startPos.x) == 2)
         		&& board.getCell(new Position(Math.abs(endPos.x + startPos.x)/2, Math.abs(endPos.y + startPos.y)/2)) == player;
     }
 
+    /*
+     * Checks if boundaries if a move is within the board boundaries.
+     */
     public boolean checkBoundaries() {
         return endPos.x >= 0 && 
                 endPos.x < Constants.LINE_LENGTH && 
@@ -39,6 +48,9 @@ public class Move {
                     board.getCell(endPos) == Constants.EMPTY_CELL; 
     }
 
+    /*
+     * Prints the positions associated with the move on the console.
+     */
     public void print() {
         System.out.println("Start Pos: (" + startPos.x + "," + startPos.y + ")  End Pos: (" + endPos.x + "," + endPos.y + ")");
     }
