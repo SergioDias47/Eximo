@@ -73,6 +73,10 @@ public class Controller implements ActionListener, KeyListener {
 				case "goBackMenu":
 					goBackToMenu();
 					break;
+				case "settings":
+					gui.switchPanel(Constants.SETTINGS_PANEL);
+					break;
+					
 			}
 		} 
 		gui.requestFocusInWindow();

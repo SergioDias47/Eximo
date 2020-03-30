@@ -18,6 +18,7 @@ public class MenuPanel extends JMenuBar {
 	private MenuButton startPBGameButton; // start a player vs bot match
 	private MenuButton startBBGameButton; // start a bot vs bot match
 	private MenuButton exitButton; 
+	private MenuButton settingsButton; 
 	private Image backgroundImage;
 	
 	public void paintComponent(Graphics g) {
@@ -31,7 +32,7 @@ public class MenuPanel extends JMenuBar {
 		super();
 		
 		// Setting layout manager
-		GridLayout layout = new GridLayout(9,3);
+		GridLayout layout = new GridLayout(11,3);
 		setLayout(layout);
 		this.setBackground(new Color(0,0,0));
 		try {
@@ -59,6 +60,10 @@ public class MenuPanel extends JMenuBar {
 		exitButton = new MenuButton();
 		exitButton.setText("EXIT GAME");
 		exitButton.setName("exit");
+		
+		settingsButton = new MenuButton();
+		settingsButton.setText("SETTINGS");
+		settingsButton.setName("settings");
 		
 		// Adding components to content pane
 		add(Box.createRigidArea(new Dimension(10, 10)));
@@ -90,6 +95,14 @@ public class MenuPanel extends JMenuBar {
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		
 		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(settingsButton, BorderLayout.SOUTH);
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		add(Box.createRigidArea(new Dimension(10, 10)));
+		
+		add(Box.createRigidArea(new Dimension(10, 10)));
 		add(exitButton, BorderLayout.SOUTH);
 		add(Box.createRigidArea(new Dimension(10, 10)));
 		
@@ -106,6 +119,7 @@ public class MenuPanel extends JMenuBar {
 		startPBGameButton.addActionListener(ctrl);
 		startBBGameButton.addActionListener(ctrl);
 		exitButton.addActionListener(ctrl);
+		settingsButton.addActionListener(ctrl);
 	}
 
 }

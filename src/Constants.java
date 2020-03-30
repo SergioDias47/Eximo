@@ -41,6 +41,7 @@ public class Constants {
 	public final static int EAST = -1;
 	public final static int MENU_PANEL = 0;
 	public final static int GAME_PANEL = 1;
+	public final static int SETTINGS_PANEL = 2;
 	public final static int PLAYER_VS_PLAYER = 0;
 	public final static int PLAYER_VS_BOT = 1;
 	public final static int BOT_VS_BOT = 2;
@@ -61,6 +62,6 @@ public class Constants {
 	public final static String REMAINING_PIECES_MSG_2 = "      Player 2 ->  \t\t Remaining pieces: ";
 	public final static String GAME_OVER_MSG_1 = "   Game over! Player 1 wins!";
 	public final static String GAME_OVER_MSG_2 = "   Game over! Player 2 wins!";
-	public static final String NUM_MOVES_MSG = "     Nº Novements: ";
+	public static final String NUM_MOVES_MSG = "     Nº Movements: ";
 	public static final String ELAPSED_TIME_MSG = "     Elapsed time: ";
 }

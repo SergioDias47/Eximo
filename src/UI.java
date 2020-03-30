@@ -3,13 +3,16 @@ import java.awt.Container;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class UI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private GamePanel gamePanel;
 	private MenuPanel menuPanel;
+	private SettingsPanel settingsPanel;
 	private CardLayout layout;
+	private int currentPanel;
 	
 	public UI() {
 		super("gui");
@@ -26,11 +29,16 @@ public class UI extends JFrame {
 		
 		gamePanel = new GamePanel();
 		menuPanel = new MenuPanel();
+		settingsPanel = new SettingsPanel();
 		
 		/* Adding Swing components to content pane */
 		Container c = getContentPane();
 		c.add(menuPanel);
+		c.add(settingsPanel);
 		c.add(gamePanel);
+		
+		/* Sets the current panel as menu panel */
+		currentPanel = Constants.MENU_PANEL;
 	}
 	
 	/*
@@ -51,14 +59,26 @@ public class UI extends JFrame {
 	 * Switches on to the next card, since UI uses a Card Layout. 
 	 */
 	public void switchPanel(int panel) {
-		if(panel == Constants.GAME_PANEL) {
-			if(gamePanel != null)
-				getContentPane().remove(gamePanel);
-			gamePanel = new GamePanel();
-			getContentPane().add(gamePanel);
+		switch(panel) {
+			case Constants.GAME_PANEL:
+				if(gamePanel != null)
+					getContentPane().remove(gamePanel);
+				gamePanel = new GamePanel();
+				getContentPane().add(gamePanel);
+				layout.next(getContentPane());
+				layout.next(getContentPane());	
+				currentPanel = Constants.GAME_PANEL;
+				break;
+			case Constants.MENU_PANEL:
+				layout.next(getContentPane());
+				if(currentPanel == Constants.SETTINGS_PANEL)
+					layout.next(getContentPane());
+				currentPanel = Constants.MENU_PANEL;
+				break;
+			case Constants.SETTINGS_PANEL:
+				layout.next(getContentPane());
+				currentPanel = Constants.SETTINGS_PANEL;
 		}
-			
-		layout.next(getContentPane());
 	}
 	
 	/*
