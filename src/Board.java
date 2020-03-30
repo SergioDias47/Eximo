@@ -135,6 +135,34 @@ public class Board {
 			}
 		return count;
 	}
+	
+	/*
+	 * Evaluates the board according to the side rows.
+	 * The more pieces a player has there and the closer to the end of the board, the higher will be the returned evaluation.
+	 */
+	public int evaluateSideColumns(int player) {
+		int evaluation = 0;
+		for(int i = 0; i < Constants.LINE_LENGTH; i++) {
+			if (cells[0][i] == player)
+    			evaluation += i * i;
+			if (cells[7][i] == player)
+    			evaluation += i * i;
+		}
+		return evaluation;
+	}
+	
+	/**
+     * Counts the number of pieces located at the beginning of the board.
+     */
+    public int countPiecesBeginning(int player) {
+    	int count = 0;
+    	for(int i = 0; i < Constants.LINE_LENGTH; i++) {
+    		if(cells[i][player == Constants.PLAYER_1 ? 0 : 7] == player) { 
+    			count++;
+    		}
+    	}
+    	return count;
+    }
     
     @Override
     public boolean equals(Object o) {   

@@ -6,17 +6,17 @@ public class Constants {
 	 * 
 	 * */
 	
-	public final static int MINIMAX_DEPTH = 2;
+	public final static int MINIMAX_DEPTH = 3;
 	
 	/* Maximum amount of time (milliseconds) to search for the best move. After then, the best move found so far is used */
-	public final static int MAX_SEARCH_TIME = 1500; 
+	public final static int MAX_SEARCH_TIME = 3000; 
 	
 	/* Minimum delay between moves (milliseconds) */
 	public final static int MIN_DELAY = 0; 
 	
 	/* Heuristic used for each player */
-	public final static int HEURISTIC_PLAYER_1 = 0;
-	public final static int HEURISTIC_PLAYER_2 = 0;
+	public final static int HEURISTIC_PLAYER_1 = 4;
+	public final static int HEURISTIC_PLAYER_2 = 3;
 	
 	/* 
 	 * 
@@ -48,6 +48,11 @@ public class Constants {
 	public final static int CAPTURE = 1;
 	public final static int JUMP_OVER = 2;
 	public final static int ERROR = -1;
+	public final static int RANDOM_HEURISTIC = 0;
+	public final static int BASIC_HEURISTIC = 1;
+	public final static int FIRST_HEURISTIC = 2;
+	public final static int IMPROVED_HEURISTIC = 3;
+	public final static int ADVANCED_HEURISTIC = 4;
 	public final static boolean ACTIVATE_GRID = true;
 	public final static String NONE_SELECTED = "";
 	public final static String PLAYER_1_TURN = "   Player 1's Turn";
