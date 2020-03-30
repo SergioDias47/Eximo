@@ -6,7 +6,7 @@ public class Constants {
 	 * 
 	 * */
 	
-	public final static int MINIMAX_DEPTH = 3;
+	public final static int MINIMAX_DEPTH = 2;
 	
 	/* Maximum amount of time (milliseconds) to search for the best move. After then, the best move found so far is used */
 	public final static int MAX_SEARCH_TIME = 1500; 
@@ -15,7 +15,7 @@ public class Constants {
 	public final static int MIN_DELAY = 0; 
 	
 	/* Heuristic used for each player */
-	public final static int HEURISTIC_PLAYER_1 = 2;
+	public final static int HEURISTIC_PLAYER_1 = 0;
 	public final static int HEURISTIC_PLAYER_2 = 0;
 	
 	/* 
@@ -52,8 +52,10 @@ public class Constants {
 	public final static String NONE_SELECTED = "";
 	public final static String PLAYER_1_TURN = "   Player 1's Turn";
 	public final static String PLAYER_2_TURN = "   Player 2's Turn";
-	public final static String REMAINING_PIECES_MSG_1 = "      Player 1 \t\t Remaining pieces: ";
-	public final static String REMAINING_PIECES_MSG_2 = "      Player 2 \t\t Remaining pieces: ";
+	public final static String REMAINING_PIECES_MSG_1 = "      Player 1 ->  \t\t Remaining pieces: ";
+	public final static String REMAINING_PIECES_MSG_2 = "      Player 2 ->  \t\t Remaining pieces: ";
 	public final static String GAME_OVER_MSG_1 = "   Game over! Player 1 wins!";
 	public final static String GAME_OVER_MSG_2 = "   Game over! Player 2 wins!";
+	public static final String NUM_MOVES_MSG = "     Nº Novements: ";
+	public static final String ELAPSED_TIME_MSG = "     Elapsed time: ";
 }

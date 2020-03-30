@@ -71,8 +71,8 @@ public class UI extends JFrame {
 	/*
 	 * Requests the GamePanel object to update the information about a match.
 	 */
-	public void updateMatchInfo(int numPieces1, int numPieces2, boolean gameOver) {
-		gamePanel.updateMatchInfo(numPieces1, numPieces2, gameOver);
+	public void updateMatchInfo(MatchInfo struct) {
+		gamePanel.updateMatchInfo(struct);
 	}
 	
 	/*

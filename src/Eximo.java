@@ -4,11 +4,16 @@ import java.util.List;
 
 public class Eximo {
 	
-	/* User interface, game mode, execution time */
+	/* User interface, game mode, control vars */
 	private UI gui;
 	private int gameMode;
 	private boolean stopWorking = false;
 	private long startTime;
+	
+	/* Statistics */
+	private long gameTime;
+	private int numMoves1;
+	private int numMoves2;
 	
 	/* Game state */
     private int player;
@@ -23,6 +28,7 @@ public class Eximo {
         forcedStates = new ArrayList<MoveSequence>();
         this.gameMode = gameMode;
         this.gui = gui;
+        initializeStatistics();
         if(gameMode == Constants.BOT_VS_BOT) {
 			startBotWork();
 		}
@@ -38,6 +44,15 @@ public class Eximo {
 			  public void run() {
 				  botMove();
 		}}.start();
+	}
+	
+	/*
+	 * Initializes the statistics variables of the game.
+	 */
+	private void initializeStatistics() {
+		gameTime = 0;
+		numMoves1 = 0;
+		numMoves2 = 0;
 	}
 	
 	/*
@@ -73,7 +88,10 @@ public class Eximo {
      */
     public void nextPlayer() {
 		player = Utils.otherPlayer(player);
-		gui.updateMatchInfo(board.countPieces(Constants.PLAYER_1), board.countPieces(Constants.PLAYER_2), gameOver());
+		int numPieces1 = board.countPieces(Constants.PLAYER_1);
+		int numPieces2 = board.countPieces(Constants.PLAYER_2);
+		MatchInfo struct = new MatchInfo(numMoves1, numMoves2, numPieces1, numPieces2, gameOver());
+		gui.updateMatchInfo(struct);
 	}
     
     /*
@@ -106,6 +124,9 @@ public class Eximo {
     	
     	if(isValid) {
     		board = nextBoard;
+    		if(player == Constants.PLAYER_1)
+				numMoves1++;
+			else numMoves2++;
     		printCurrentBoard();
     		forcedStates = newForcedStates;
     		if (board.pieceReachedEnd) {
@@ -166,6 +187,11 @@ public class Eximo {
 				e.printStackTrace();
 			}
 		}
+		
+		if(player == Constants.PLAYER_1)
+			numMoves1 += chosenMove.size();
+		else numMoves2 += chosenMove.size();;
+		
 		nextPlayer();
 		if(gameOver()) return;
 		if(gameMode == Constants.BOT_VS_BOT) {
