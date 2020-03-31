@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JComboBox;
+
 public class Controller implements ActionListener, KeyListener {
 
 	private UI gui;
@@ -21,7 +23,15 @@ public class Controller implements ActionListener, KeyListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
 		String buttonName = ((Component) e.getSource()).getName();
+		
+		if(((Component) e.getSource()).getClass().equals(JComboBox.class)) {
+			@SuppressWarnings("unchecked")
+			JComboBox<String> cb = (JComboBox<String>)e.getSource();
+	        String option = (String)cb.getSelectedItem();
+			handleDropDowns(buttonName, option);
+		}
 		
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			/* If the bot is thinking, human players should not disturb it */
@@ -89,31 +99,31 @@ public class Controller implements ActionListener, KeyListener {
 	public void handleSettingsActions(String buttonName) {
 		switch(buttonName) {
 			case "pb-low":
-				Properties.HEURISTIC_PLAYER_2 = 0;
+				Properties.HEURISTIC_PLAYER_2 = Constants.RANDOM_HEURISTIC;
 				break;
 			case "pb-medium":
-				Properties.HEURISTIC_PLAYER_2 = 1;
+				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
 				break;
 			case "pb-high":
-				Properties.HEURISTIC_PLAYER_2 = 4;
+				Properties.HEURISTIC_PLAYER_2 = Constants.ADVANCED_HEURISTIC;
 				break;
 			case "bb1-low":
-				Properties.HEURISTIC_PLAYER_1 = 0;
+				Properties.HEURISTIC_PLAYER_1 = Constants.RANDOM_HEURISTIC;
 				break;
 			case "bb1-medium":
-				Properties.HEURISTIC_PLAYER_1 = 1;
+				Properties.HEURISTIC_PLAYER_1 = Constants.BASIC_HEURISTIC;
 				break;
 			case "bb1-high":
-				Properties.HEURISTIC_PLAYER_1 = 4;
+				Properties.HEURISTIC_PLAYER_1 = Constants.ADVANCED_HEURISTIC;
 				break;
 			case "bb2-low":
-				Properties.HEURISTIC_PLAYER_2 = 0;
+				Properties.HEURISTIC_PLAYER_2 = Constants.RANDOM_HEURISTIC;
 				break;
 			case "bb2-medium":
-				Properties.HEURISTIC_PLAYER_2 = 1;
+				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
 				break;
 			case "bb2-high":
-				Properties.HEURISTIC_PLAYER_2 = 4;
+				Properties.HEURISTIC_PLAYER_2 = Constants.ADVANCED_HEURISTIC;
 				break;
 			case "goBackMenu":
 				goBackToMenu();
@@ -123,9 +133,51 @@ public class Controller implements ActionListener, KeyListener {
 	}
 	
 	/*
+	 * Handles dropdown events.
+	 */
+	public void handleDropDowns(String name, String option) {
+		switch(name) {
+			case "timesBoxMin":
+				switch(option) {
+					case "0":
+					case "250":
+					case "500":
+					case "1000":
+					case "2000":
+						Properties.MIN_DELAY = Integer.parseInt(option);
+				}
+				break;
+			case "timesBoxMax":
+				switch(option) {
+					case "1000":
+					case "2000":
+					case "3000":
+					case "5000":
+						Properties.MAX_SEARCH_TIME = Integer.parseInt(option);
+						break;
+					case "Unlimited":
+						Properties.MAX_SEARCH_TIME = Integer.MAX_VALUE;
+				}
+				break;
+			case "depthsBox":
+				switch(option) {
+					case "1":
+					case "2":
+					case "3":
+					case "4":
+					case "5":
+					case "6":
+						Properties.MINIMAX_DEPTH = Integer.parseInt(option);
+						break;		
+				}
+		}
+	}
+	
+	/*
 	 * Quits a match and goes back to the main menu.
 	 */
 	public void goBackToMenu() {
+		Properties.print();
 		if(game != null) {
 			game.stopBotWork();
 			game = null;
@@ -149,7 +201,7 @@ public class Controller implements ActionListener, KeyListener {
 			firstSelected = Constants.NONE_SELECTED;
 		}
 		if(key == KeyEvent.VK_ESCAPE) {
-			if(game != null)
+			if(gui.getCurrentPanel() == Constants.GAME_PANEL || gui.getCurrentPanel() == Constants.SETTINGS_PANEL)
 				goBackToMenu();
 		}
 	}

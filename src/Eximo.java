@@ -11,7 +11,7 @@ public class Eximo {
 	private long startTime;
 	
 	/* Statistics */
-	private long gameTime;
+	
 	private int numMoves1;
 	private int numMoves2;
 	
@@ -50,7 +50,6 @@ public class Eximo {
 	 * Initializes the statistics variables of the game.
 	 */
 	private void initializeStatistics() {
-		gameTime = 0;
 		numMoves1 = 0;
 		numMoves2 = 0;
 	}
@@ -259,8 +258,6 @@ public class Eximo {
 			}
 			bestScore = Integer.MAX_VALUE;
 		}
-		
-		
 		
 		if(depth == 1) { // we've gone into the desired depth, so it's time to rate the solutions
 			int currentScore = Heuristics.evaluateState(board, this.player); 

@@ -103,6 +103,13 @@ public class UI extends JFrame {
 	}
 	
 	/*
+	 * Returns the name of the current panel.
+	 */
+	public int getCurrentPanel() {
+		return currentPanel;
+	}
+	
+	/*
 	 * Requests the GamePanel object to update the information about a match.
 	 */
 	public void updateMatchInfo(MatchInfo struct) {

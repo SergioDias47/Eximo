@@ -32,7 +32,7 @@ public class Heuristics {
 	 * Plays randomly.
 	 */
 	private static int randomHeuristic() {
-		return (int) Math.random()*1000;
+		return (int) (Math.random()*1000);
 	}
 	
 	/*

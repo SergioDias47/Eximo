@@ -9,10 +9,19 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.JComboBox;
 import javax.swing.JMenuBar;
 
 public class SettingsPanel extends JMenuBar {
 	private static final long serialVersionUID = 1L;
+	
+	private final String maxTimes[] = { "Unlimited", "1000", "2000", "3000", "5000" };
+	private final String minTimes[] = { "0", "250", "500", "1000", "2000" };
+	private final String depths[] = { "1", "2", "3", "4", "5", "6" };
+
+	private JComboBox<String> timesBoxMax;
+	private JComboBox<String> timesBoxMin;
+	private JComboBox<String> depthsBox; 
 	
 	private SettingsButton PBDifficultyLow; 
 	private SettingsButton PBDifficultyMedium; 
@@ -26,16 +35,13 @@ public class SettingsPanel extends JMenuBar {
 	private SettingsButton BB2DifficultyMedium; 
 	private SettingsButton BB2DifficultyHigh;
 	
-	private SettingsButton exitButton;
+	private MenuButton exitButton;
 	
-	private GameLabel playerVSbot, botVSbot;
+	private GameLabel playerVSbot, botVSbot, depth, maxTime;
 	
 	private static final String lowD = "  Low  ";
 	private static final String mediumD = "Medium";
 	private static final String highD = "  High  ";
-	
-	final Color brownColor = new Color(156, 90, 3);
-	final Color beigeColor = new Color(255, 255, 227);
 	
 	private Image backgroundImage;
 	
@@ -100,9 +106,18 @@ public class SettingsPanel extends JMenuBar {
 		
 		playerVSbot = new GameLabel("PLAYER VS BOT", 20);
 		botVSbot = new GameLabel("BOT VS BOT", 20);
+		depth = new GameLabel("Minimax Depth", 16);
+		maxTime = new GameLabel("Minimum delay / Maximum time per bot move", 16);
 		
-		exitButton = new SettingsButton();
-		exitButton.setText("                               Go back to menu                               ");
+		timesBoxMin = new JComboBox<String>(minTimes);
+		timesBoxMin.setName("timesBoxMin");
+		timesBoxMax = new JComboBox<String>(maxTimes);
+		timesBoxMax.setName("timesBoxMax");
+		depthsBox = new JComboBox<String>(depths);
+		depthsBox.setName("depthsBox");
+		
+		exitButton = new MenuButton();
+		exitButton.setText(Constants.BIG_SPACE + "Go back to menu" + Constants.BIG_SPACE);
 		exitButton.setName("goBackMenu");    
 		
 		// Adding components to content pane
@@ -201,7 +216,6 @@ public class SettingsPanel extends JMenuBar {
 		c.gridwidth = 1;
 		add(Box.createRigidArea(new Dimension(35, 1)), c);
 		
-		
 		c.gridx = 0;
 		c.gridy = 8;
 		c.gridwidth = 8;
@@ -209,9 +223,34 @@ public class SettingsPanel extends JMenuBar {
 		
 		c.gridx = 0;
 		c.gridy = 9;
+		c.gridwidth = 8;
+		add(depth, c);
+		
+		c.gridx = 0;
+		c.gridy = 10;
+		c.gridwidth = 0;
+		add(depthsBox, c);
+		
+		c.gridx = 0;
+		c.gridy = 11;
+		c.gridwidth = 8;
+		add(maxTime, c);
+		
+		c.gridx = 0;
+		c.gridy = 12;
+		c.gridwidth = 5;
+		add(timesBoxMin, c);
+		
+		c.gridx = 2;
+		c.gridy = 12;
+		add(timesBoxMax, c);
+		
+		c.gridx = 0;
+		c.gridy = 13;
 		c.gridwidth = 10;
 		add(exitButton, c);
 		
+		initializeSelections();
 	}
 	
 	/*
@@ -230,7 +269,54 @@ public class SettingsPanel extends JMenuBar {
 		BB2DifficultyMedium.addActionListener(ctrl);
 		BB2DifficultyHigh.addActionListener(ctrl);
 		
+		timesBoxMax.addActionListener(ctrl);
+		timesBoxMin.addActionListener(ctrl);
+		depthsBox.addActionListener(ctrl);
 		exitButton.addActionListener(ctrl);
+	}
+	
+	public void initializeSelections() {
+		switch(Properties.HEURISTIC_PLAYER_1) {
+			case Constants.RANDOM_HEURISTIC:
+				highlightSelection("bb1-low");
+				break;
+			case Constants.BASIC_HEURISTIC:
+				highlightSelection("bb1-medium");
+				break;
+			case Constants.ADVANCED_HEURISTIC:
+				highlightSelection("bb1-high");
+				break;
+		}
+		switch(Properties.HEURISTIC_PLAYER_2) {
+			case Constants.RANDOM_HEURISTIC:
+				highlightSelection("pb-low");
+				highlightSelection("bb2-low");
+				break;
+			case Constants.BASIC_HEURISTIC:
+				highlightSelection("pb-medium");
+				highlightSelection("bb2-medium");
+				break;
+			case Constants.ADVANCED_HEURISTIC:
+				highlightSelection("pb-high");
+				highlightSelection("bb2-high");
+				break;
+		}
+		
+		
+		for(int i = 0; i < depths.length; i++) {
+			if(Integer.parseInt(depths[i]) == Properties.MINIMAX_DEPTH)
+				depthsBox.setSelectedIndex(i);
+		}
+		for(int i = 0; i < maxTimes.length; i++) {
+			if(maxTimes[i].equals("Unlimited"))
+				continue;
+			if(Integer.parseInt(maxTimes[i]) == Properties.MAX_SEARCH_TIME)
+				timesBoxMax.setSelectedIndex(i);
+		}
+		for(int i = 0; i < minTimes.length; i++) {
+			if(Integer.parseInt(minTimes[i]) == Properties.MIN_DELAY)
+				timesBoxMin.setSelectedIndex(i);
+		}
 	}
 	
 	public void highlightSelection(String selection) {
@@ -246,82 +332,82 @@ public class SettingsPanel extends JMenuBar {
 			case "bb2":
 				switch(difficulty) {
 					case "low":
-						PBDifficultyLow.setBackground(brownColor);
-						PBDifficultyMedium.setBackground(beigeColor);
-						PBDifficultyHigh.setBackground(beigeColor);
-						BB2DifficultyLow.setBackground(brownColor);
-						BB2DifficultyMedium.setBackground(beigeColor);
-						BB2DifficultyHigh.setBackground(beigeColor);
+						PBDifficultyLow.setBackground(Constants.BROWN_COLOR);
+						PBDifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						PBDifficultyHigh.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyLow.setBackground(Constants.BROWN_COLOR);
+						BB2DifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyHigh.setBackground(Constants.BEIGE_COLOR);
 						
-						PBDifficultyLow.setForeground(beigeColor);
-						PBDifficultyMedium.setForeground(brownColor);
-						PBDifficultyHigh.setForeground(brownColor);
-						BB2DifficultyLow.setForeground(beigeColor);
-						BB2DifficultyMedium.setForeground(brownColor);
-						BB2DifficultyHigh.setForeground(brownColor);
+						PBDifficultyLow.setForeground(Constants.BEIGE_COLOR);
+						PBDifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						PBDifficultyHigh.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyLow.setForeground(Constants.BEIGE_COLOR);
+						BB2DifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyHigh.setForeground(Constants.BROWN_COLOR);
 						break;
 					case "medium":
-						PBDifficultyLow.setBackground(beigeColor);
-						PBDifficultyMedium.setBackground(brownColor);
-						PBDifficultyHigh.setBackground(beigeColor);
-						BB2DifficultyLow.setBackground(beigeColor);
-						BB2DifficultyMedium.setBackground(brownColor);
-						BB2DifficultyHigh.setBackground(beigeColor);
+						PBDifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						PBDifficultyMedium.setBackground(Constants.BROWN_COLOR);
+						PBDifficultyHigh.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyMedium.setBackground(Constants.BROWN_COLOR);
+						BB2DifficultyHigh.setBackground(Constants.BEIGE_COLOR);
 						
-						PBDifficultyLow.setForeground(brownColor);
-						PBDifficultyMedium.setForeground(beigeColor);
-						PBDifficultyHigh.setForeground(brownColor);
-						BB2DifficultyLow.setForeground(brownColor);
-						BB2DifficultyMedium.setForeground(beigeColor);
-						BB2DifficultyHigh.setForeground(brownColor);
+						PBDifficultyLow.setForeground(Constants.BROWN_COLOR);
+						PBDifficultyMedium.setForeground(Constants.BEIGE_COLOR);
+						PBDifficultyHigh.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyLow.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyMedium.setForeground(Constants.BEIGE_COLOR);
+						BB2DifficultyHigh.setForeground(Constants.BROWN_COLOR);
 						break;
 					case "high":
-						PBDifficultyLow.setBackground(beigeColor);
-						PBDifficultyMedium.setBackground(beigeColor);
-						PBDifficultyHigh.setBackground(brownColor);
-						BB2DifficultyLow.setBackground(beigeColor);
-						BB2DifficultyMedium.setBackground(beigeColor);
-						BB2DifficultyHigh.setBackground(brownColor);
+						PBDifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						PBDifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						PBDifficultyHigh.setBackground(Constants.BROWN_COLOR);
+						BB2DifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						BB2DifficultyHigh.setBackground(Constants.BROWN_COLOR);
 						
-						PBDifficultyLow.setForeground(brownColor);
-						PBDifficultyMedium.setForeground(brownColor);
-						PBDifficultyHigh.setForeground(beigeColor);
-						BB2DifficultyLow.setForeground(brownColor);
-						BB2DifficultyMedium.setForeground(brownColor);
-						BB2DifficultyHigh.setForeground(beigeColor);
+						PBDifficultyLow.setForeground(Constants.BROWN_COLOR);
+						PBDifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						PBDifficultyHigh.setForeground(Constants.BEIGE_COLOR);
+						BB2DifficultyLow.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						BB2DifficultyHigh.setForeground(Constants.BEIGE_COLOR);
 						break;
 				}
 				break;
 			case "bb1":
 				switch(difficulty) {
 					case "low":
-						BB1DifficultyLow.setBackground(brownColor);
-						BB1DifficultyMedium.setBackground(beigeColor);
-						BB1DifficultyHigh.setBackground(beigeColor);
+						BB1DifficultyLow.setBackground(Constants.BROWN_COLOR);
+						BB1DifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						BB1DifficultyHigh.setBackground(Constants.BEIGE_COLOR);
 						
-						BB1DifficultyLow.setForeground(beigeColor);
-						BB1DifficultyMedium.setForeground(brownColor);
-						BB1DifficultyHigh.setForeground(brownColor);
+						BB1DifficultyLow.setForeground(Constants.BEIGE_COLOR);
+						BB1DifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						BB1DifficultyHigh.setForeground(Constants.BROWN_COLOR);
 						break;
 					case "medium":
-						BB1DifficultyLow.setBackground(beigeColor);
-						BB1DifficultyMedium.setBackground(brownColor);
-						BB1DifficultyHigh.setBackground(beigeColor);
+						BB1DifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						BB1DifficultyMedium.setBackground(Constants.BROWN_COLOR);
+						BB1DifficultyHigh.setBackground(Constants.BEIGE_COLOR);
 						
-						BB1DifficultyLow.setForeground(brownColor);
-						BB1DifficultyMedium.setForeground(beigeColor);
-						BB1DifficultyHigh.setForeground(brownColor);
+						BB1DifficultyLow.setForeground(Constants.BROWN_COLOR);
+						BB1DifficultyMedium.setForeground(Constants.BEIGE_COLOR);
+						BB1DifficultyHigh.setForeground(Constants.BROWN_COLOR);
 						break;
 					case "high":
-						BB1DifficultyLow.setBackground(beigeColor);
-						BB1DifficultyMedium.setBackground(beigeColor);
-						BB1DifficultyHigh.setBackground(brownColor);
+						BB1DifficultyLow.setBackground(Constants.BEIGE_COLOR);
+						BB1DifficultyMedium.setBackground(Constants.BEIGE_COLOR);
+						BB1DifficultyHigh.setBackground(Constants.BROWN_COLOR);
 						
-						BB1DifficultyLow.setForeground(brownColor);
-						BB1DifficultyMedium.setForeground(brownColor);
-						BB1DifficultyHigh.setForeground(beigeColor);
+						BB1DifficultyLow.setForeground(Constants.BROWN_COLOR);
+						BB1DifficultyMedium.setForeground(Constants.BROWN_COLOR);
+						BB1DifficultyHigh.setForeground(Constants.BEIGE_COLOR);
 						break;
-			}
+				}
 				break;
 		}
 		

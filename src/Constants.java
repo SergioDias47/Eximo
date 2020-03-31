@@ -38,6 +38,7 @@ public class Constants {
 	public final static Color BEIGE_COLOR = new Color(255, 255, 227);
 	
 	public final static String NONE_SELECTED = "";
+	public final static String BIG_SPACE = "                               ";
 	public final static String PLAYER_1_TURN = "   Player 1's Turn";
 	public final static String PLAYER_2_TURN = "   Player 2's Turn";
 	public final static String REMAINING_PIECES_MSG_1 = "      Player 1 ->  \t\t Remaining pieces: ";
