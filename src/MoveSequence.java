@@ -31,8 +31,8 @@ public class MoveSequence implements Comparable<MoveSequence> {
 		int eval2 = Heuristics.evaluateState(finalBoard2, player);
 		
 		if (eval1 > eval2) return -1;
-		if (eval1 < eval2) return 1;
-		return 0;
+		else if (eval1 < eval2) return 1;
+		else return 0;
 	}
 
 	/*

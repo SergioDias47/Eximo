@@ -11,7 +11,6 @@ public class Eximo {
 	private long startTime;
 	
 	/* Statistics */
-	
 	private int numMoves1;
 	private int numMoves2;
 	
@@ -147,14 +146,18 @@ public class Eximo {
     	}
     }
     
+    /**
+     * Handles the case when a player needs to choose a cell in the drop zone to put a new piece after another reached the end of the board.
+     */
     public void addPieceAt(Position pos) {
-    	if (Utils.isWithinDropZone(pos, player)) {
+    	if (Utils.isWithinDropZone(pos, player) && board.getCell(pos) == Constants.EMPTY_CELL) {
     		board.setCell(pos, player);
     		printCurrentBoard();
     		if (--piecesToAdd == 0) {
     			forcedStates.clear();
     			board.removeEndPieces(player);
     			nextPlayer();
+    			gui.removeAllHighlights();
     			printCurrentBoard();
     			if(gameMode == Constants.PLAYER_VS_BOT) botMove();
     		}

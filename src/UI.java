@@ -3,7 +3,6 @@ import java.awt.Container;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class UI extends JFrame {
 	private static final long serialVersionUID = 1L;

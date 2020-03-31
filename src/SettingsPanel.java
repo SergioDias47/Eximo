@@ -277,10 +277,10 @@ public class SettingsPanel extends JMenuBar {
 	
 	public void initializeSelections() {
 		switch(Properties.HEURISTIC_PLAYER_1) {
-			case Constants.RANDOM_HEURISTIC:
+			case Constants.BASIC_HEURISTIC:
 				highlightSelection("bb1-low");
 				break;
-			case Constants.BASIC_HEURISTIC:
+			case Constants.IMPROVED_HEURISTIC:
 				highlightSelection("bb1-medium");
 				break;
 			case Constants.ADVANCED_HEURISTIC:
@@ -288,11 +288,11 @@ public class SettingsPanel extends JMenuBar {
 				break;
 		}
 		switch(Properties.HEURISTIC_PLAYER_2) {
-			case Constants.RANDOM_HEURISTIC:
+			case Constants.BASIC_HEURISTIC:
 				highlightSelection("pb-low");
 				highlightSelection("bb2-low");
 				break;
-			case Constants.BASIC_HEURISTIC:
+			case Constants.IMPROVED_HEURISTIC:
 				highlightSelection("pb-medium");
 				highlightSelection("bb2-medium");
 				break;

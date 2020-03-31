@@ -1,3 +1,4 @@
+import java.util.Random;
 
 public class Heuristics {
 	
@@ -32,7 +33,8 @@ public class Heuristics {
 	 * Plays randomly.
 	 */
 	private static int randomHeuristic() {
-		return (int) (Math.random()*1000);
+		Random rand = new Random();
+		return rand.nextInt(100);
 	}
 	
 	/*

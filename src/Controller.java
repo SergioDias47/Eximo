@@ -40,7 +40,10 @@ public class Controller implements ActionListener, KeyListener {
 			
 			/* If the player has extra pieces, the controller must let him choose where to place them */
 			if (game.getPiecesToAdd() > 0) {
-				game.addPieceAt(Utils.getButtonPos(buttonName));
+				new Thread() {
+					  public void run() {
+						  game.addPieceAt(Utils.getButtonPos(buttonName));
+				}}.start();
 			}
 			else {
 				if(firstSelected.equals(Constants.NONE_SELECTED)) {
@@ -99,28 +102,28 @@ public class Controller implements ActionListener, KeyListener {
 	public void handleSettingsActions(String buttonName) {
 		switch(buttonName) {
 			case "pb-low":
-				Properties.HEURISTIC_PLAYER_2 = Constants.RANDOM_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
 				break;
 			case "pb-medium":
-				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_2 = Constants.IMPROVED_HEURISTIC;
 				break;
 			case "pb-high":
 				Properties.HEURISTIC_PLAYER_2 = Constants.ADVANCED_HEURISTIC;
 				break;
 			case "bb1-low":
-				Properties.HEURISTIC_PLAYER_1 = Constants.RANDOM_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_1 = Constants.BASIC_HEURISTIC;
 				break;
 			case "bb1-medium":
-				Properties.HEURISTIC_PLAYER_1 = Constants.BASIC_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_1 = Constants.IMPROVED_HEURISTIC;
 				break;
 			case "bb1-high":
 				Properties.HEURISTIC_PLAYER_1 = Constants.ADVANCED_HEURISTIC;
 				break;
 			case "bb2-low":
-				Properties.HEURISTIC_PLAYER_2 = Constants.RANDOM_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
 				break;
 			case "bb2-medium":
-				Properties.HEURISTIC_PLAYER_2 = Constants.BASIC_HEURISTIC;
+				Properties.HEURISTIC_PLAYER_2 = Constants.IMPROVED_HEURISTIC;
 				break;
 			case "bb2-high":
 				Properties.HEURISTIC_PLAYER_2 = Constants.ADVANCED_HEURISTIC;
