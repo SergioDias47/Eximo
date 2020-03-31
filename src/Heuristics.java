@@ -5,8 +5,8 @@ public class Heuristics {
 	
 	public static int evaluateState(Board board, int player) {
 		if(player == Constants.PLAYER_1)
-			heuristicID = Constants.HEURISTIC_PLAYER_1;
-		else heuristicID = Constants.HEURISTIC_PLAYER_2;
+			heuristicID = Properties.HEURISTIC_PLAYER_1;
+		else heuristicID = Properties.HEURISTIC_PLAYER_2;
 		
 		switch(heuristicID) {
 			case Constants.RANDOM_HEURISTIC:

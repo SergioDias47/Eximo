@@ -15,17 +15,18 @@ public class Controller implements ActionListener, KeyListener {
 		//UI
 		gui = new UI();
 		gui.setMenuListener(this);
+		gui.setSettingsListener(this);
 		gui.setKeyListener(this);
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String buttonName = ((Component) e.getSource()).getName();
+		
 		if(((Component) e.getSource()).getClass().equals(BoardButton.class)) {
 			/* If the bot is thinking, human players should not disturb it */
 			if(game.getGameMode() == Constants.PLAYER_VS_BOT && game.getPlayer() == Constants.PLAYER_2)
 				return;
-			
-			String buttonName = ((Component) e.getSource()).getName();
 			
 			/* If the player has extra pieces, the controller must let him choose where to place them */
 			if (game.getPiecesToAdd() > 0) {
@@ -46,8 +47,9 @@ public class Controller implements ActionListener, KeyListener {
 					firstSelected = Constants.NONE_SELECTED;
 				}
 			}
+		} else if(((Component) e.getSource()).getClass().equals(SettingsButton.class)) {
+			handleSettingsActions(buttonName);
 		} else {
-			String buttonName = ((Component) e.getSource()).getName();
 			switch(buttonName) {
 				case "PP":
 					game = new Eximo(gui, Constants.PLAYER_VS_PLAYER);
@@ -76,18 +78,58 @@ public class Controller implements ActionListener, KeyListener {
 				case "settings":
 					gui.switchPanel(Constants.SETTINGS_PANEL);
 					break;
-					
 			}
 		} 
 		gui.requestFocusInWindow();
 	}
 	
 	/*
+	 * Handles settings events.
+	 */
+	public void handleSettingsActions(String buttonName) {
+		switch(buttonName) {
+			case "pb-low":
+				Properties.HEURISTIC_PLAYER_2 = 0;
+				break;
+			case "pb-medium":
+				Properties.HEURISTIC_PLAYER_2 = 1;
+				break;
+			case "pb-high":
+				Properties.HEURISTIC_PLAYER_2 = 4;
+				break;
+			case "bb1-low":
+				Properties.HEURISTIC_PLAYER_1 = 0;
+				break;
+			case "bb1-medium":
+				Properties.HEURISTIC_PLAYER_1 = 1;
+				break;
+			case "bb1-high":
+				Properties.HEURISTIC_PLAYER_1 = 4;
+				break;
+			case "bb2-low":
+				Properties.HEURISTIC_PLAYER_2 = 0;
+				break;
+			case "bb2-medium":
+				Properties.HEURISTIC_PLAYER_2 = 1;
+				break;
+			case "bb2-high":
+				Properties.HEURISTIC_PLAYER_2 = 4;
+				break;
+			case "goBackMenu":
+				goBackToMenu();
+				break;
+		}
+		gui.getSettingsPanel().highlightSelection(buttonName);
+	}
+	
+	/*
 	 * Quits a match and goes back to the main menu.
 	 */
 	public void goBackToMenu() {
-		game.stopBotWork();
-		game = null;
+		if(game != null) {
+			game.stopBotWork();
+			game = null;
+		}
 		gui.switchPanel(Constants.MENU_PANEL);
 		firstSelected = Constants.NONE_SELECTED;
 	}

@@ -49,6 +49,13 @@ public class UI extends JFrame {
 	}
 	
 	/*
+	 * Requests the SettingsPanel object to set up listeners for their buttons, so that actions can be handled in the specified controller.
+	 */
+	public void setSettingsListener(Controller ctrl) {
+		settingsPanel.setButtonListeners(ctrl);
+	}
+	
+	/*
 	 * Requests the GamePanel object to set up listeners for their buttons, so that actions can be handled in the specified controller.
 	 */
 	public void setGamePanelListener(Controller ctrl, boolean activateGrid) {
@@ -86,6 +93,13 @@ public class UI extends JFrame {
 	 */
 	public BoardPanel getBoard() {
 		return gamePanel.getBoard();
+	}
+	
+	/*
+	 * Returns the SettingsPanel object. 
+	 */
+	public SettingsPanel getSettingsPanel() {
+		return settingsPanel;
 	}
 	
 	/*

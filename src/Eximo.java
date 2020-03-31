@@ -171,7 +171,7 @@ public class Eximo {
 		MoveSequence chosenMove = findBestSequence();
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Elapsed time: " + elapsedTime);
-		int delay = Integer.max((int) (Constants.MIN_DELAY - elapsedTime), 0);
+		int delay = Integer.max((int) (Properties.MIN_DELAY - elapsedTime), 0);
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e) {
@@ -182,7 +182,7 @@ public class Eximo {
 			board = frame;
 			printCurrentBoard();
 			try {
-				Thread.sleep(Constants.MIN_DELAY);
+				Thread.sleep(Properties.MIN_DELAY);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -230,7 +230,7 @@ public class Eximo {
 		
 		for(MoveSequence move : allMoves) {
 			Board finalBoard = move.getLastBoard();
-			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, Constants.MINIMAX_DEPTH);
+			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, Properties.MINIMAX_DEPTH);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestMove = move;
@@ -274,7 +274,7 @@ public class Eximo {
 			Collections.reverse(allMoves);
 		
 		for(MoveSequence move : allMoves) {
-			if(System.currentTimeMillis() - startTime > Integer.max(Constants.MAX_SEARCH_TIME, Constants.MINIMAX_DEPTH*20)) { 
+			if(System.currentTimeMillis() - startTime > Integer.max(Properties.MAX_SEARCH_TIME, Properties.MINIMAX_DEPTH*20)) { 
 				break; // time is up
 			}
 			Board finalBoard = move.getLastBoard();
