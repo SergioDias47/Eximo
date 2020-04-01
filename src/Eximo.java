@@ -170,7 +170,7 @@ public class Eximo {
 	public void botMove() {
 		
 		long startTime = System.currentTimeMillis();
-		MoveSequence chosenMove = findBestSequence();
+		MoveSequence chosenMove = findBestSequenceAlphaBeta();
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.println("Elapsed time: " + elapsedTime);
 		int delay = Integer.max((int) (Properties.MIN_DELAY - elapsedTime), 0);
@@ -221,18 +221,20 @@ public class Eximo {
 	}
 	
 	/*
-	 * Returns the best sequence of moves to play in a given state of the game.
+	 * Returns the best sequence of moves to play in a given state of the game. (calls minimax with alpha/beta pruning)
 	 */
-	private MoveSequence findBestSequence() {
+	private MoveSequence findBestSequenceAlphaBeta() {
 		startTime = System.currentTimeMillis();
 		List<MoveSequence> allMoves = generateAllSequences(board, player);
 		Collections.sort(allMoves); // sorting nodes for better performance
 		int bestScore = Integer.MIN_VALUE;
 		MoveSequence bestMove = allMoves.get(0); // if time is up before finding any solution, this one is returned
 		
+		int depth = player == Constants.PLAYER_1 ? Properties.DEPTH_PLAYER_1 : Properties.DEPTH_PLAYER_2;
+		
 		for(MoveSequence move : allMoves) {
 			Board finalBoard = move.getLastBoard();
-			int newScore = minimax(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, Properties.MINIMAX_DEPTH);
+			int newScore = minimaxAlphaBeta(finalBoard, false, Integer.MIN_VALUE, Integer.MAX_VALUE, depth);
 			if(newScore > bestScore) {
 				bestScore = newScore;
 				bestMove = move;
@@ -244,7 +246,7 @@ public class Eximo {
 	/*
 	 * Minimax algorithm with alpha/beta pruning.
 	 */
-	private int minimax(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
+	private int minimaxAlphaBeta(Board board, boolean isMaximizing, int alpha, int beta, int depth) {
 		if(stopWorking) return 0;
 		int bestScore;
 		int player;
@@ -278,7 +280,7 @@ public class Eximo {
 				break; // time is up
 			}
 			Board finalBoard = move.getLastBoard();
-			int newScore = minimax(finalBoard, !isMaximizing, alpha, beta, depth - 1);
+			int newScore = minimaxAlphaBeta(finalBoard, !isMaximizing, alpha, beta, depth - 1);
 			if (isMaximizing) {
 				bestScore = Integer.max(bestScore, newScore);
 				alpha = Integer.max(alpha, newScore);
@@ -289,6 +291,71 @@ public class Eximo {
 				beta = Integer.min(beta, newScore);
 				if(beta <= alpha)
 					break;
+			}
+		}
+		return bestScore;
+	}
+	
+	/*
+	 * Returns the best sequence of moves to play in a given state of the game. (calls minimax without alpha/beta pruning)
+	 */
+	private MoveSequence findBestSequence() {
+		startTime = System.currentTimeMillis();
+		List<MoveSequence> allMoves = generateAllSequences(board, player);
+		int bestScore = Integer.MIN_VALUE;
+		MoveSequence bestMove = allMoves.get(0); // if time is up before finding any solution, this one is returned
+		
+		int depth = player == Constants.PLAYER_1 ? Properties.DEPTH_PLAYER_1 : Properties.DEPTH_PLAYER_2;
+		
+		for(MoveSequence move : allMoves) {
+			Board finalBoard = move.getLastBoard();
+			int newScore = minimax(finalBoard, false, depth);
+			if(newScore > bestScore) {
+				bestScore = newScore;
+				bestMove = move;
+			}
+		}
+		return bestMove;
+	}
+
+	/*
+	 * Minimax algorithm without alpha/beta pruning.
+	 */
+	private int minimax(Board board, boolean isMaximizing, int depth) {
+		if(stopWorking) return 0;
+		int bestScore;
+		int player;
+		if (isMaximizing) {
+			player = this.player;
+			if(checkWinner(board, player)) {
+				return Integer.MAX_VALUE;
+			}
+			bestScore = Integer.MIN_VALUE;
+		} else {
+			player = Utils.otherPlayer(this.player);
+			if(checkWinner(board, player)) {
+				return Integer.MAX_VALUE;
+			}
+			bestScore = Integer.MAX_VALUE;
+		}
+		
+		if(depth == 1) { // we've gone into the desired depth, so it's time to rate the solutions
+			int currentScore = Heuristics.evaluateState(board, this.player); 
+			return currentScore;
+		}
+		
+		List<MoveSequence> allMoves = generateAllSequences(board, player);
+		
+		for(MoveSequence move : allMoves) {
+			if(System.currentTimeMillis() - startTime > Integer.max(Properties.MAX_SEARCH_TIME, Properties.MINIMAX_DEPTH*20)) { 
+				break; // time is up
+			}
+			Board finalBoard = move.getLastBoard();
+			int newScore = minimax(finalBoard, !isMaximizing, depth - 1);
+			if (isMaximizing) {
+				bestScore = Integer.max(bestScore, newScore);
+			} else {
+				bestScore = Integer.min(bestScore, newScore);
 			}
 		}
 		return bestScore;
