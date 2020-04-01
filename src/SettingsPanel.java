@@ -155,9 +155,7 @@ public class SettingsPanel extends JMenuBar {
 		c.gridx = 0;
 		c.gridy = 4;
 		c.gridwidth = 8;
-		
 		add(botVSbot, c);
-		
 		c.gridx = 0;
 		c.gridy = 6;
 		c.gridwidth = 1;
@@ -186,7 +184,6 @@ public class SettingsPanel extends JMenuBar {
 		c.gridy = 6;
 		c.gridwidth = 1;
 		add(Box.createRigidArea(new Dimension(35, 1)), c);
-		
 		c.gridx = 0;
 		c.gridy = 7;
 		c.gridwidth = 1;
@@ -215,38 +212,35 @@ public class SettingsPanel extends JMenuBar {
 		c.gridy = 7;
 		c.gridwidth = 1;
 		add(Box.createRigidArea(new Dimension(35, 1)), c);
-		
 		c.gridx = 0;
 		c.gridy = 8;
 		c.gridwidth = 8;
 		add(Box.createRigidArea(new Dimension(35, 1)), c);
-		
 		c.gridx = 0;
 		c.gridy = 9;
 		c.gridwidth = 8;
 		add(depth, c);
-		
 		c.gridx = 0;
 		c.gridy = 10;
 		c.gridwidth = 0;
 		add(depthsBox, c);
-		
 		c.gridx = 0;
 		c.gridy = 11;
 		c.gridwidth = 8;
 		add(maxTime, c);
-		
 		c.gridx = 0;
 		c.gridy = 12;
 		c.gridwidth = 5;
 		add(timesBoxMin, c);
-		
 		c.gridx = 2;
 		c.gridy = 12;
 		add(timesBoxMax, c);
-		
 		c.gridx = 0;
 		c.gridy = 13;
+		c.gridwidth = 10;
+		add(Box.createRigidArea(new Dimension(35, 1)), c);
+		c.gridx = 0;
+		c.gridy = 14;
 		c.gridwidth = 10;
 		add(exitButton, c);
 		
@@ -275,6 +269,9 @@ public class SettingsPanel extends JMenuBar {
 		exitButton.addActionListener(ctrl);
 	}
 	
+	/*
+	 * Defines the default selections according to the initial game properties.
+	 */
 	public void initializeSelections() {
 		switch(Properties.HEURISTIC_PLAYER_1) {
 			case Constants.BASIC_HEURISTIC:
@@ -319,6 +316,9 @@ public class SettingsPanel extends JMenuBar {
 		}
 	}
 	
+	/*
+	 * Highlights the selection matching the specified one and removes highlights from the other ones under the same context.
+	 */
 	public void highlightSelection(String selection) {
 		if(selection == "goBackMenu") {
 			return;
